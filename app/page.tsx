@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -17,9 +17,9 @@ export default async function Home() {
       <div className="text-red-500 text-3xl font-bold">Tailwind動いてる？</div>
 
       <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">管理画面</h1>
-      <Button>新規作成</Button>
-    </div>
+        <h1 className="text-2xl font-bold mb-4">管理画面</h1>
+        <Button className="bg-blue-500 hover:bg-blue-700"> 新規作成</Button>
+      </div>
     </main>
   );
 }
