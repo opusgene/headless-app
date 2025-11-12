@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { Button } from "@/components/ui/button"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,6 +15,11 @@ export default async function Home() {
       <h1 className="text-xl font-bold">Hello Headless CMS</h1>
       <p>Supabase接続テスト完了！</p>
       <div className="text-red-500 text-3xl font-bold">Tailwind動いてる？</div>
+
+      <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">管理画面</h1>
+      <Button>新規作成</Button>
+    </div>
     </main>
   );
 }
