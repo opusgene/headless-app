@@ -14,7 +14,6 @@ export default async function Home() {
     <main className="p-8">
       <h1 className="text-xl font-bold">Hello Headless CMS</h1>
       <p>Supabase接続テスト完了！</p>
-      <div className="text-red-500 text-3xl font-bold">Tailwind動いてる？</div>
 
       <div className="p-8">
         <h1 className="text-2xl font-bold mb-4">管理画面</h1>
