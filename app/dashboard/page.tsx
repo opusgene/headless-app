@@ -9,11 +9,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     (async () => {
-      const { data: userData } = await supabase.auth.getUser();
-      console.log("✅ 現在ログイン中のユーザー:", userData)
+      console.log("🔥 useEffect started")
+
+      const { data: userData, error: userError } = await supabase.auth.getUser()
+      console.log("✅ 現在ログイン中のユーザー:", userData, userError)
 
       const user = userData.user;
       if (!user) {
+        console.log("🚫 userがnullのためログインページへ")
         router.push("/login");
         return;
       }
@@ -28,6 +31,7 @@ export default function Dashboard() {
       if (error) {
         console.error("profiles fetch error:", error);
       } else {
+        console.log("🎯 取得したプロフィール:", data)
         setProfile(data);
       }
     })();
