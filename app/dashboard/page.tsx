@@ -10,6 +10,8 @@ export default function Dashboard() {
   useEffect(() => {
     (async () => {
       const { data: userData } = await supabase.auth.getUser();
+      console.log("✅ 現在ログイン中のユーザー:", userData)
+
       const user = userData.user;
       if (!user) {
         router.push("/login");
