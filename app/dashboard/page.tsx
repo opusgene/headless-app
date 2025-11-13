@@ -24,9 +24,10 @@ export default function Dashboard() {
       // profiles テーブルから自分の行を取得
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, role, golf_course_id, name")
-        .eq("id", user.id)
-        .single();
+        .select("*");
+        // .select("id, role, golf_course_id, name")
+        // .eq("id", user.id)
+        // .single();
         console.log("🎯 profiles取得結果:", data, error);
 
       if (error) {
