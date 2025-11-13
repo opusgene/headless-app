@@ -27,6 +27,7 @@ export default function Dashboard() {
         .select("id, role, golf_course_id, name")
         .eq("id", user.id)
         .single();
+        console.log("🎯 profiles取得結果:", data, error);
 
       if (error) {
         console.error("profiles fetch error:", error);
