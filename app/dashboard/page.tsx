@@ -9,35 +9,33 @@ export default function Dashboard() {
 
   useEffect(() => {
     (async () => {
-      console.log("🔥 useEffect started")
-
-      const { data: userData, error: userError } = await supabase.auth.getUser()
-      console.log("✅ 現在ログイン中のユーザー:", userData, userError)
-
+      console.log("🔥 useEffect started");
+  
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      console.log("✅ auth.getUser() 結果:", userData, userError);
+      console.log("✅ auth uid:", userData.user?.id);
+  
       const user = userData.user;
       if (!user) {
-        console.log("🚫 userがnullのためログインページへ")
+        console.log("🚫 userがnullのためログインページへ");
         router.push("/login");
         return;
       }
-
-      // profiles テーブルから自分の行を取得
-      const { data, error } = await supabase
+  
+      const { data: profilesData, error: profilesError } = await supabase
         .from("profiles")
-        .select("*");
-        // .select("id, role, golf_course_id, name")
-        // .eq("id", user.id)
-        // .single();
-        console.log("🎯 profiles取得結果:", data, error);
-
-      if (error) {
-        console.error("profiles fetch error:", error);
-      } else {
-        console.log("🎯 取得したプロフィール:", data)
-        setProfile(data);
+        .select("*")
+        .eq("id", user.id)
+        .single();
+  
+      console.log("🎯 profiles取得結果:", profilesData, profilesError);
+  
+      if (!profilesError && profilesData) {
+        setProfile(profilesData);
       }
     })();
   }, [router]);
+  
 
   if (!profile) return <div>読み込み中...</div>;
 
