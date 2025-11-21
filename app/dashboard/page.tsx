@@ -51,7 +51,7 @@ export default function Dashboard() {
   console.log("🎯 selectedCourseId =", selectedCourseId);
   console.log(
     "🎯 フィルタ結果 =",
-    courses.filter((c) => c.id === selectedCourseId)
+    courses.filter((c) => c.golf_course_id === selectedCourseId)
   );
 
   return (
