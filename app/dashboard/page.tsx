@@ -9,7 +9,6 @@ export default function Dashboard() {
   const router = useRouter();
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 
-
   useEffect(() => {
     (async () => {
       console.log("🔥 useEffect started");
@@ -61,7 +60,6 @@ export default function Dashboard() {
         ログイン中: {profile.name} ({profile.role})
       </p>
 
-
       {profile.role === "super_admin" ? (
         <div className="mt-6">
           {/* ▼ ゴルフ場セレクト ▼ */}
@@ -83,17 +81,15 @@ export default function Dashboard() {
 
           {/* ▼ 選択されたゴルフ場のデータ表示 ▼ */}
           {selectedCourseId && (
-            <div className="mt-6 p-4 border rounded">
-              <h2 className="text-xl mb-2">選択されたゴルフ場のデータ</h2>
+            <>
+              <h2 className="text-xl">選択されたゴルフ場のデータ</h2>
+
               {courses
-                .filter((c) => c.golf_course_id === selectedCourseId)
+                .filter((c) => c.id.trim() === selectedCourseId.trim())
                 .map((c) => (
-                  <div key={c.golf_course_id}>
-                    <p>ID: {c.golf_course_id}</p>
-                    <p>名前: {c.name}</p>
-                  </div>
+                  <div key={c.id}>{c.name}</div>
                 ))}
-            </div>
+            </>
           )}
         </div>
       ) : (
