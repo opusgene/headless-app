@@ -86,10 +86,10 @@ export default function Dashboard() {
             <div className="mt-6 p-4 border rounded">
               <h2 className="text-xl mb-2">選択されたゴルフ場のデータ</h2>
               {courses
-                .filter((c) => c.id === selectedCourseId)
+                .filter((c) => c.golf_course_id === selectedCourseId)
                 .map((c) => (
-                  <div key={c.id}>
-                    <p>ID: {c.id}</p>
+                  <div key={c.golf_course_id}>
+                    <p>ID: {c.golf_course_id}</p>
                     <p>名前: {c.name}</p>
                   </div>
                 ))}
