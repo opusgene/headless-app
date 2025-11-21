@@ -5,37 +5,43 @@ import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null);
+  const [courses, setCourses] = useState<any[]>([]); // ← ゴルフ場データ用
   const router = useRouter();
 
   useEffect(() => {
     (async () => {
       console.log("🔥 useEffect started");
-  
-      const { data: userData, error: userError } = await supabase.auth.getUser();
-      console.log("✅ auth.getUser() 結果:", userData, userError);
-      console.log("✅ auth uid:", userData.user?.id);
-  
+
+      // ---------- 認証取得 ----------
+      const { data: userData } = await supabase.auth.getUser();
       const user = userData.user;
+
       if (!user) {
-        console.log("🚫 userがnullのためログインページへ");
         router.push("/login");
         return;
       }
-  
-      const { data: profilesData, error: profilesError } = await supabase
+
+      // ---------- プロフィール取得 ----------
+      const { data: profilesData } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user.id)
         .single();
-  
-      console.log("🎯 profiles取得結果:", profilesData, profilesError);
-  
-      if (!profilesError && profilesData) {
-        setProfile(profilesData);
+
+      setProfile(profilesData);
+
+      // ---------- ゴルフ場情報を取得（RLSなし）----------
+      const { data: coursesData, error: coursesError } = await supabase
+        .from("golf_courses")
+        .select("*");
+
+      console.log("🎯 golf_courses:", coursesData, coursesError);
+
+      if (coursesData) {
+        setCourses(coursesData);
       }
     })();
   }, [router]);
-  
 
   if (!profile) return <div>読み込み中...</div>;
 
@@ -45,9 +51,21 @@ export default function Dashboard() {
       <p className="mt-4">ログイン中: {profile.name} ({profile.role})</p>
 
       {profile.role === "super_admin" ? (
-        <div className="mt-6">スーパー管理者用の全体表示をここに出す</div>
+        <div className="mt-6">
+          <h2 className="text-xl">全ゴルフ場のデータ</h2>
+          {courses.map((c) => (
+            <div key={c.id}>{c.name}</div>
+          ))}
+        </div>
       ) : (
-        <div className="mt-6">ゴルフ場 {profile.golf_course_id} のデータだけ表示</div>
+        <div className="mt-6">
+          <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
+          {courses
+            .filter((c) => c.id === profile.golf_course_id)
+            .map((c) => (
+              <div key={c.id}>{c.name}</div>
+            ))}
+        </div>
       )}
     </div>
   );
