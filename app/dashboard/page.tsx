@@ -45,10 +45,19 @@ export default function Dashboard() {
 
   if (!profile) return <div>読み込み中...</div>;
 
+  console.log("🐛 デバッグ: courses =", courses);
+  console.log("🐛 デバッグ: profile =", profile);
+  console.log(
+    "🐛 デバッグ: filter結果 =",
+    courses.filter((c) => c.id === profile.golf_course_id)
+  );
+
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold">管理画面</h1>
-      <p className="mt-4">ログイン中: {profile.name} ({profile.role})</p>
+      <p className="mt-4">
+        ログイン中: {profile.name} ({profile.role})
+      </p>
 
       {profile.role === "super_admin" ? (
         <div className="mt-6">
