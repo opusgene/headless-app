@@ -70,7 +70,7 @@ export default function Dashboard() {
         <div className="mt-6">
           <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
           {courses
-            .filter((c) => c.golf_course_id === profile.golf_course_id)
+            // .filter((c) => c.golf_course_id === profile.golf_course_id)
             .map((c) => (
               <div key={c.golf_course_id}>{c.name}</div>
             ))}
