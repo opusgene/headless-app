@@ -9,7 +9,6 @@ export default function Dashboard() {
   const router = useRouter();
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 
-
   useEffect(() => {
     (async () => {
       console.log("🔥 useEffect started");
@@ -47,11 +46,12 @@ export default function Dashboard() {
 
   if (!profile) return <div>読み込み中...</div>;
 
-  console.log("🐛 デバッグ: courses =", courses);
-  console.log("🐛 デバッグ: profile =", profile);
+  // ---- デバッグログ ----
+  console.log("🎯 全 courses =", courses);
+  console.log("🎯 selectedCourseId =", selectedCourseId);
   console.log(
-    "🐛 デバッグ: filter結果 =",
-    courses.filter((c) => c.id === profile.golf_course_id)
+    "🎯 フィルタ結果 =",
+    courses.filter((c) => c.id === selectedCourseId)
   );
 
   return (
@@ -60,7 +60,6 @@ export default function Dashboard() {
       <p className="mt-4">
         ログイン中: {profile.name} ({profile.role})
       </p>
-
 
       {profile.role === "super_admin" ? (
         <div className="mt-6">
