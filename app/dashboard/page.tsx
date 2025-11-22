@@ -106,7 +106,7 @@ export default function Dashboard() {
         // course_admin の表示区分
         <div className="mt-6">
           <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-          {renderCourseData(profile.golf_course_id)}
+          {renderCourseData(profile.id)}
         </div>
       )}
     </div>
