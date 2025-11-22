@@ -97,7 +97,9 @@ export default function Dashboard() {
 
           {selectedCourseId && (
             <div className="mt-6">
-              <h2 className="text-lg font-semibold">選択されたゴルフ場のデータ</h2>
+              <h2 className="text-lg font-semibold">
+                選択されたゴルフ場のデータ
+              </h2>
               {renderCourseData(selectedCourseId)}
             </div>
           )}
@@ -106,7 +108,7 @@ export default function Dashboard() {
         // course_admin の表示区分
         <div className="mt-6">
           <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-          {renderCourseData(profile.id)}
+          {renderCourseData(profile.golf_course_id)}
         </div>
       )}
     </div>
