@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null);
-  const [courses, setCourses] = useState<any[]>([]); // ← ゴルフ場データ用
-  const router = useRouter();
+  const [courses, setCourses] = useState<any[]>([]);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -31,7 +31,7 @@ export default function Dashboard() {
 
       setProfile(profilesData);
 
-      // ---------- ゴルフ場情報を取得（RLSなし）----------
+      // ---------- ゴルフ場情報を取得（RLSなし） ----------
       const { data: coursesData, error: coursesError } = await supabase
         .from("golf_courses")
         .select("*");
@@ -54,6 +54,21 @@ export default function Dashboard() {
     courses.filter((c) => c.golf_course_id === selectedCourseId)
   );
 
+  // ---- 共通: ゴルフ場データの表示関数 ----
+  const renderCourseData = (courseId: string) => {
+    const target = courses.find((c) => c.golf_course_id === courseId);
+
+    if (!target) return <p className="text-gray-500">該当データなし</p>;
+
+    return (
+      <div className="p-4 border rounded mt-4">
+        <p>ID: {target.id}</p>
+        <p>名前: {target.name}</p>
+        <p>golf_course_id: {target.golf_course_id}</p>
+      </div>
+    );
+  };
+
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold">管理画面</h1>
@@ -61,48 +76,37 @@ export default function Dashboard() {
         ログイン中: {profile.name} ({profile.role})
       </p>
 
+      {/* super_admin の表示区分 */}
       {profile.role === "super_admin" ? (
         <div className="mt-6">
-          {/* ▼ ゴルフ場セレクト ▼ */}
-          <div className="mt-4">
-            <label className="block mb-2 font-medium">ゴルフ場を選択</label>
-            <select
-              className="border p-2 rounded"
-              value={selectedCourseId ?? ""}
-              onChange={(e) => setSelectedCourseId(e.target.value)}
-            >
-              <option value="">選択してください</option>
-              {courses.map((course) => (
-                <option key={course.id} value={course.id}>
-                  {course.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
 
-          {/* ▼ 選択されたゴルフ場のデータ表示 ▼ */}
+          <select
+            className="border p-2 rounded"
+            value={selectedCourseId ?? ""}
+            onChange={(e) => setSelectedCourseId(e.target.value)}
+          >
+            <option value="">選択してください</option>
+
+            {courses.map((course) => (
+              <option key={course.id} value={course.golf_course_id}>
+                {course.name}
+              </option>
+            ))}
+          </select>
+
           {selectedCourseId && (
-            <div className="mt-6 p-4 border rounded">
-              <h2 className="text-xl mb-2">選択されたゴルフ場のデータ</h2>
-              {courses
-                .filter((c) => c.id.trim === selectedCourseId)
-                .map((c) => (
-                  <div key={c.id}>
-                    <p>ID: {c.id}</p>
-                    <p>名前: {c.name}</p>
-                  </div>
-                ))}
+            <div className="mt-6">
+              <h2 className="text-lg font-semibold">選択されたゴルフ場のデータ</h2>
+              {renderCourseData(selectedCourseId)}
             </div>
           )}
         </div>
       ) : (
+        // course_admin の表示区分
         <div className="mt-6">
           <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-          {courses
-            .filter((c) => c.golf_course_id === profile.golf_course_id)
-            .map((c) => (
-              <div key={c.golf_course_id}>{c.name}</div>
-            ))}
+          {renderCourseData(profile.golf_course_id)}
         </div>
       )}
     </div>
