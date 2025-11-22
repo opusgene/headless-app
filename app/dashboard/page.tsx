@@ -56,7 +56,7 @@ export default function Dashboard() {
 
   // ---- 共通: ゴルフ場データの表示関数 ----
   const renderCourseData = (courseId: string) => {
-    const target = courses.find((c) => c.id === courseId);
+    const target = courses.find((c) => c.golf_course_id === courseId);
     console.log("🎯 courseId =", courseId);
     if (!target) return <p className="text-gray-500">該当データなし</p>;
 
