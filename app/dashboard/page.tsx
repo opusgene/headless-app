@@ -69,7 +69,10 @@ export default function Dashboard() {
             <select
               className="border p-2 rounded"
               value={selectedCourseId ?? ""}
-              onChange={(e) => setSelectedCourseId(e.target.value)}
+              onChange={(e) => {
+                const course = courses.find((c) => c.id === e.target.value);
+                setSelectedCourseId(course?.golf_course_id ?? null);
+              }}
             >
               <option value="">選択してください</option>
               {courses.map((course) => (
@@ -85,10 +88,10 @@ export default function Dashboard() {
             <div className="mt-6 p-4 border rounded">
               <h2 className="text-xl mb-2">選択されたゴルフ場のデータ</h2>
               {courses
-                .filter((c) => c.id.trim === selectedCourseId)
+                .filter((c) => c.golf_course_id.trim === selectedCourseId)
                 .map((c) => (
-                  <div key={c.id}>
-                    <p>ID: {c.id}</p>
+                  <div key={c.golf_course_id}>
+                    <p>ID: {c.golf_course_id}</p>
                     <p>名前: {c.name}</p>
                   </div>
                 ))}
