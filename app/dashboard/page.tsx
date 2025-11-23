@@ -62,7 +62,6 @@ export default function Dashboard() {
 
     return (
       <div className="p-4 border rounded mt-4">
-        <p>ID: {target.id}</p>
         <p>名前: {target.name}</p>
         <p>golf_course_id: {target.golf_course_id}</p>
       </div>
