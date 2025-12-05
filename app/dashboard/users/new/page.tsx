@@ -14,7 +14,7 @@ export default function NewUserPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch("/app/api/admin/create-user", {
+    const res = await fetch("/api/admin/create-user", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
