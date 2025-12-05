@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import crypto from "crypto"; // ✅ 追加
 
 export async function POST(req: Request) {
   try {
@@ -9,21 +10,26 @@ export async function POST(req: Request) {
       email,
       password,
       name,
-      role,       // "admin" | "staff"
+      role,
       golfCourseName,
     } = body;
 
-    /* ① ゴルフ場 新規作成 */
+    /* ✅ ① ゴルフ場 新規作成（golf_course_id を自動生成） */
+    const golfCourseId = crypto.randomUUID();
+
     const { data: golfCourse, error: golfError } =
       await supabaseAdmin
         .from("golf_courses")
-        .insert({ name: golfCourseName })
+        .insert({
+          name: golfCourseName,
+          golf_course_id: golfCourseId, // ✅ これが今回の修正ポイント
+        })
         .select()
         .single();
 
     if (golfError) throw golfError;
 
-    /* ② Auth ユーザー作成 */
+    /* ✅ ② Auth ユーザー作成 */
     const { data: userData, error: authError } =
       await supabaseAdmin.auth.admin.createUser({
         email,
@@ -35,13 +41,13 @@ export async function POST(req: Request) {
 
     const userId = userData.user.id;
 
-    /* ③ profiles 作成（ゴルフ場と紐付け） */
+    /* ✅ ③ profiles 作成（golf_course_id で紐付ける） */
     const { error: profileError } =
       await supabaseAdmin.from("profiles").insert({
         id: userId,
         name,
         role,
-        golf_course_id: golfCourse.id,
+        golf_course_id: golfCourseId, // ✅ id ではなく golf_course_id
       });
 
     if (profileError) throw profileError;
