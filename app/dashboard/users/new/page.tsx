@@ -7,7 +7,7 @@ export default function NewUserPage() {
     email: "",
     password: "",
     name: "",
-    role: "admin",
+    role: "course_admin",
     golfCourseName: "",
   });
 
