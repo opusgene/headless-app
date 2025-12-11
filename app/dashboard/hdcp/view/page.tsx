@@ -1,5 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import type { Database } from '@/supabase/types';
+
+type HdcpScore = Database['public']['Tables']['hdcp_scores']['Row'];
 
 export default async function HdcpViewPage() {
   const supabase = createClient();
@@ -27,7 +30,6 @@ export default async function HdcpViewPage() {
     <div>
       <h1 className="text-2xl font-bold mb-4">HDCP 一覧</h1>
 
-      {/* ← ここに実データが入る！ */}
       <table className="min-w-full border">
         <thead>
           <tr className="bg-gray-100 border-b">
@@ -36,7 +38,7 @@ export default async function HdcpViewPage() {
           </tr>
         </thead>
         <tbody>
-          {scores?.map((row) => (
+          {scores?.map((row: HdcpScore) => (
             <tr key={row.id} className="border-b">
               <td className="p-2">{row.player_name}</td>
               <td className="p-2">{row.hdcp ?? "未定"}</td>
