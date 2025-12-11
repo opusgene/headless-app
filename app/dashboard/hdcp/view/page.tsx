@@ -1,30 +1,22 @@
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
-import type { Database } from '@/supabase/types';
-
-type HdcpScore = Database['public']['Tables']['hdcp_scores']['Row'];
+// app/dashboard/hdcp/view/page.tsx
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function HdcpViewPage() {
   const supabase = createClient();
 
-  // --- ログインユーザー判定 ----------------------
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect('/login');
-  }
+  if (!user) redirect("/login");
 
-  // --- HDCP スコア取得（RLS が自動でフィルタ）----
   const { data: scores, error } = await supabase
-    .from('hdcp_scores')
-    .select('*')
-    .order('player_name', { ascending: true });
+    .from("hdcp_scores")
+    .select("*")
+    .order("player_name", { ascending: true });
 
-  if (error) {
-    return <p>Error: {error.message}</p>;
-  }
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
     <div>
@@ -38,7 +30,7 @@ export default async function HdcpViewPage() {
           </tr>
         </thead>
         <tbody>
-          {scores?.map((row: HdcpScore) => (
+          {scores?.map((row) => (
             <tr key={row.id} className="border-b">
               <td className="p-2">{row.player_name}</td>
               <td className="p-2">{row.hdcp ?? "未定"}</td>

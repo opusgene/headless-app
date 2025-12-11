@@ -1,8 +1,8 @@
-import { cookies } from 'next/headers';
-import { createServerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/auth-helpers-nextjs";
 
-export function createClient() {
-  const cookieStore = cookies();
+export async function createClient() {
+  const cookieStore = await cookies();  // ← ここが重要（await）
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,13 +12,13 @@ export function createClient() {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set() {
-          // Route handlers では自動処理されるので何もしない
+        set(name: string, value: string, options: any) {
+          cookieStore.set({ name, value, ...options });
         },
-        remove() {
-          // Route handlers では自動処理されるので何もしない
-        }
-      }
+        remove(name: string, options: any) {
+          cookieStore.set({ name, value: "", ...options });
+        },
+      },
     }
   );
 }
