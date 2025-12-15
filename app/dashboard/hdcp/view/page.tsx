@@ -2,7 +2,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
+type HdcpScore = {
+  id: string;
+  player_name: string;
+  hdcp: number | null;
+};
+
 export default async function HdcpViewPage() {
+  // ★ await を忘れない
   const supabase = await createClient();
 
   const {
@@ -13,10 +20,12 @@ export default async function HdcpViewPage() {
 
   const { data: scores, error } = await supabase
     .from("hdcp_scores")
-    .select("*")
+    .select("id, player_name, hdcp")
     .order("player_name", { ascending: true });
 
-  if (error) return <p>Error: {error.message}</p>;
+  if (error) {
+    return <p>Error: {error.message}</p>;
+  }
 
   return (
     <div>
@@ -30,7 +39,7 @@ export default async function HdcpViewPage() {
           </tr>
         </thead>
         <tbody>
-          {scores?.map((row) => (
+          {scores?.map((row: HdcpScore) => (
             <tr key={row.id} className="border-b">
               <td className="p-2">{row.player_name}</td>
               <td className="p-2">{row.hdcp ?? "未定"}</td>
