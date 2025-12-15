@@ -1,8 +1,9 @@
+// lib/supabase/server.ts
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/auth-helpers-nextjs";
 
 export async function createClient() {
-  const cookieStore = await cookies();  // ← ここが重要（await）
+  const cookieStore = await cookies();
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,12 +12,6 @@ export async function createClient() {
       cookies: {
         get(name: string) {
           return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: any) {
-          cookieStore.set({ name, value, ...options });
-        },
-        remove(name: string, options: any) {
-          cookieStore.set({ name, value: "", ...options });
         },
       },
     }
