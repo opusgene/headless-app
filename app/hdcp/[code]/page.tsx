@@ -33,9 +33,7 @@ export default async function HdcpPublicPage({ params }: PageProps) {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">
-        {course.name} HDCP 表
-      </h1>
+      <h1 className="text-2xl font-bold mb-4">{course.name} HDCP 表</h1>
 
       <table className="min-w-full border">
         <thead>
