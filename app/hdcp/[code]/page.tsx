@@ -70,10 +70,30 @@
 //   );
 // }
 
-export default function TestPage({ params }: any) {
+// app/hdcp/[code]/page.tsx
+import { createClient } from "@/lib/supabase/server";
+
+export default async function Page({
+  params,
+}: {
+  params: { code: string };
+}) {
+  const supabase = await createClient();
+  const code = params.code;
+
+  const { data: course, error } = await supabase
+    .from("golf_courses")
+    .select("id, code")
+    .eq("code", code)
+    .maybeSingle();
+
+  console.log("course", course);
+  console.log("error", error);
+
   return (
     <div>
-      HDCP CODE: {params.code}
+      <p>HDCP CODE: {code}</p>
+      <pre>{JSON.stringify(course, null, 2)}</pre>
     </div>
   );
 }
