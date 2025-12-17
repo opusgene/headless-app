@@ -73,33 +73,25 @@
 // app/hdcp/[code]/page.tsx
 import { createClient } from "@/lib/supabase/server";
 
-export default async function Page({
+export default async function HdcpPublicPage({
   params,
 }: {
   params: { code: string };
 }) {
-  const supabase = await createClient();
+  const supabase = createClient();
   const code = params.code;
 
-  const { data: course, error } = await supabase
+  // 🔴 ここが「どこに書くかわからない」と言っていた部分
+  const { data: courses, error } = await supabase
     .from("golf_courses")
-    .select("id, code")
-    .eq("code", code)
-    .maybeSingle();
+    .select("id, code");
 
-  console.log("course", course);
-  console.log("error", error);
-
-  const { data: courses } = await supabase
-  .from("golf_courses")
-  .select("id, code");
-
-console.log("ALL COURSES", courses);
+  console.log("ALL COURSES", courses);
+  console.log("ERROR", error);
 
   return (
     <div>
-      <p>HDCP CODE: {code}</p>
-      <pre>{JSON.stringify(course, null, 2)}</pre>
+      <h1>HDCP CODE: {code}</h1>
     </div>
   );
 }
