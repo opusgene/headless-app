@@ -90,6 +90,12 @@ export default async function Page({
   console.log("course", course);
   console.log("error", error);
 
+  const { data: courses } = await supabase
+  .from("golf_courses")
+  .select("id, code");
+
+console.log("ALL COURSES", courses);
+
   return (
     <div>
       <p>HDCP CODE: {code}</p>
