@@ -4,9 +4,9 @@ import Link from "next/link";
 export default function HdcpDashboard() {
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">アプリケーション管理画面</h1>
+      <h1 className="text-2xl font-bold mb-4">HDCP表 管理画面</h1>
 
-      <p className="mb-6">ここではアプリケーションの登録・管理ができます。</p>
+      <p className="mb-6">ここではHDCP表の登録・管理ができます。</p>
 
       {/* ▼ HDCP 表示ページへのリンク */}
       <Link
