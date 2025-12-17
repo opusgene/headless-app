@@ -78,7 +78,7 @@ export default async function HdcpPublicPage({
 }: {
   params: { code: string };
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const code = params.code;
 
   // 🔴 ここが「どこに書くかわからない」と言っていた部分
