@@ -70,28 +70,50 @@
 //   );
 // }
 
-// app/hdcp/[code]/page.tsx
-import { createClient } from "@/lib/supabase/server";
+import { supabasePublic } from '@/lib/supabase/public'
+import { notFound } from 'next/navigation'
 
-export default async function HdcpPublicPage({
-  params,
-}: {
-  params: { code: string };
-}) {
-  const supabase = await createClient();
-  const code = params.code;
+type Props = {
+  params: { code: string }
+}
 
-  // 🔴 ここが「どこに書くかわからない」と言っていた部分
-  const { data: courses, error } = await supabase
-    .from("golf_courses")
-    .select("id, code");
+export default async function HdcpPublicPage({ params }: Props) {
+  const { code } = params
 
-  console.log("ALL COURSES", courses);
-  console.log("ERROR", error);
+  // ① golf_courses.code → id 取得
+  const { data: course, error: courseError } = await supabasePublic
+    .from('golf_courses')
+    .select('id, name')
+    .eq('code', code)
+    .single()
+
+  if (courseError || !course) {
+    notFound()
+  }
+
+  // ② hdcp_scores_public 取得
+  const { data: scores, error: scoresError } = await supabasePublic
+    .from('hdcp_scores_public')
+    .select('*')
+    .eq('golf_course_id', course.id)
+    .order('created_at', { ascending: false })
+
+  if (scoresError) {
+    throw new Error('Failed to load scores')
+  }
 
   return (
-    <div>
-      <h1>HDCP CODE: {code}</h1>
-    </div>
-  );
+    <main>
+      <h1>{course.name} HDCP</h1>
+
+      <ul>
+        {scores.map(score => (
+          <li key={score.id}>
+            {score.player_name} : {score.hdcp}
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
 }
+
