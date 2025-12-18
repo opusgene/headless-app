@@ -70,8 +70,56 @@
 //   );
 // }
 
+// import { supabasePublic } from '@/lib/supabase/public'
+// import { notFound } from 'next/navigation'
+
+// type Props = {
+//   params: { code: string }
+// }
+
+// export default async function HdcpPublicPage({ params }: Props) {
+//   const { code } = params
+
+//   // ① golf_courses.code → id 取得
+//   const { data: course, error: courseError } = await supabasePublic
+//     .from('golf_courses')
+//     .select('id, name')
+//     .eq('code', code)
+//     .single()
+
+//   if (courseError || !course) {
+//     notFound()
+//   }
+
+//   // ② hdcp_scores_public 取得
+//   const { data: scores, error: scoresError } = await supabasePublic
+//     .from('hdcp_scores_public')
+//     .select('*')
+//     .eq('golf_course_id', course.id)
+//     .order('created_at', { ascending: false })
+
+//   if (scoresError) {
+//     throw new Error('Failed to load scores')
+//   }
+
+//   return (
+//     <main>
+//       <h1>{course.name} HDCP</h1>
+
+//       <ul>
+//         {scores.map(score => (
+//           <li key={score.id}>
+//             {score.player_name} : {score.hdcp}
+//           </li>
+//         ))}
+//       </ul>
+//     </main>
+//   )
+// }
+
+
+
 import { supabasePublic } from '@/lib/supabase/public'
-import { notFound } from 'next/navigation'
 
 type Props = {
   params: { code: string }
@@ -80,40 +128,16 @@ type Props = {
 export default async function HdcpPublicPage({ params }: Props) {
   const { code } = params
 
-  // ① golf_courses.code → id 取得
-  const { data: course, error: courseError } = await supabasePublic
+  const { data, error } = await supabasePublic
     .from('golf_courses')
     .select('id, name')
     .eq('code', code)
-    .single()
 
-  if (courseError || !course) {
-    notFound()
-  }
-
-  // ② hdcp_scores_public 取得
-  const { data: scores, error: scoresError } = await supabasePublic
-    .from('hdcp_scores_public')
-    .select('*')
-    .eq('golf_course_id', course.id)
-    .order('created_at', { ascending: false })
-
-  if (scoresError) {
-    throw new Error('Failed to load scores')
-  }
+  console.log('DEBUG golf_courses', { code, data, error })
 
   return (
-    <main>
-      <h1>{course.name} HDCP</h1>
-
-      <ul>
-        {scores.map(score => (
-          <li key={score.id}>
-            {score.player_name} : {score.hdcp}
-          </li>
-        ))}
-      </ul>
-    </main>
+    <pre>
+      {JSON.stringify({ code, data, error }, null, 2)}
+    </pre>
   )
 }
-
