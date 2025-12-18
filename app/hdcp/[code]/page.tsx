@@ -126,7 +126,8 @@ type Props = {
 }
 
 export default async function HdcpPublicPage({ params }: Props) {
-  const { code } = params
+  // const { code } = params
+  const code = 'A'
 
   const { data, error } = await supabasePublic
     .from('golf_courses')
