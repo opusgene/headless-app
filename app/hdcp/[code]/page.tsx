@@ -119,25 +119,6 @@
 
 
 
-import { supabasePublic } from '@/lib/supabase/public'
-
-type Props = {
-  params: { code: string }
-}
-
-export default async function HdcpPublicPage({ params }: Props) {
-  const { code } = params
-
-  const { data, error } = await supabasePublic
-    .from('golf_courses')
-    .select('id, name')
-    .eq('code', code)
-
-  console.log('DEBUG golf_courses', { code, data, error })
-
-  return (
-    <pre>
-      {JSON.stringify({ code, data, error }, null, 2)}
-    </pre>
-  )
+export default async function Page({ params }: { params: { code: string } }) {
+  return <pre>{JSON.stringify(params, null, 2)}</pre>
 }
