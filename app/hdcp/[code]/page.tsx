@@ -127,17 +127,18 @@ import { supabasePublic } from "@/lib/supabase/public";
 export default async function Page({
   params,
 }: {
-  params: { code: string };
+  params: Promise<{ code: string }>;
 }) {
-  // 👇 ここ（Serverで実行される）
-  console.log("SERVER params:", params);
+  // 👇 ここが決定打
+  const { code } = await params;
 
-  const code = params.code;
+  console.log("SERVER code:", code);
 
   const { data, error } = await supabasePublic
     .from("golf_courses")
     .select("id, name")
-    .eq("code", code);
+    .eq("code", code)
+    .single();
 
   return (
     <pre>
