@@ -119,6 +119,23 @@
 
 
 
-export default async function Page({ params }: { params: { code: string } }) {
-  return <pre>{JSON.stringify(params, null, 2)}</pre>
+import { supabasePublic } from "@/lib/supabase/public";
+
+export default async function Page({
+  params,
+}: {
+  params: { code: string };
+}) {
+  const code = params.code;
+
+  const { data, error } = await supabasePublic
+    .from("golf_courses")
+    .select("id, name")
+    .eq("code", code);
+
+  return (
+    <pre>
+      {JSON.stringify({ code, data, error }, null, 2)}
+    </pre>
+  );
 }
