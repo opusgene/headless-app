@@ -119,6 +119,8 @@
 
 
 
+export const dynamic = "force-dynamic";
+
 import { supabasePublic } from "@/lib/supabase/public";
 
 export default async function Page({
