@@ -129,6 +129,9 @@ export default async function Page({
 }: {
   params: { code: string };
 }) {
+  // 👇 ここ（Serverで実行される）
+  console.log("SERVER params:", params);
+
   const code = params.code;
 
   const { data, error } = await supabasePublic
