@@ -19,9 +19,9 @@ export default async function Page({
     .eq("code", code)
     .single();
 
-  if (courseError || !course) {
-    notFound();
-  }
+  // if (courseError || !course) {
+  //   notFound();
+  // }
 
   // ③ hdcp_scores_public を golf_course_id で取得
   const { data: scores, error: scoresError } = await supabasePublic
