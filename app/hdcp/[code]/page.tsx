@@ -13,11 +13,11 @@ export default async function Page({
   const code = params.code;
 
   // ② golf_courses.code → id, name を取得
-  const { data: course, error: courseError } = await supabasePublic
-    .from("golf_courses")
-    .select("id, name")
-    .eq("code", code)
-    .single();
+  // const { data: course, error: courseError } = await supabasePublic
+  //   .from("golf_courses")
+  //   .select("id, name")
+  //   .eq("code", code)
+  //   .single();
 
   // if (courseError || !course) {
   //   notFound();
