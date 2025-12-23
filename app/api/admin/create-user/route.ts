@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import crypto from "crypto"; // ✅ 追加
 
+/**
+ * ゴルフ場管理者 新規登録 API
+ *
+ * 処理の流れ
+ * 1. golf_courses を作成（DBが id を生成）
+ * 2. Auth ユーザー作成
+ * 3. profiles に golf_course_id で紐付け
+ */
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -14,22 +21,39 @@ export async function POST(req: Request) {
       golfCourseName,
     } = body;
 
-    /* ✅ ① ゴルフ場 新規作成（golf_course_id を自動生成） */
-    const golfCourseId = crypto.randomUUID();
+    /* ============================
+     * ① ゴルフ場 作成
+     * ============================ */
+
+    if (!golfCourseName) {
+      throw new Error("golfCourseName is required");
+    }
+
+    // code は NOT NULL のため必ず生成する
+    // 例: "ゴルフ場B" → "GOLF場B" → "GOLF場B"
+    const code = golfCourseName
+      .replace(/\s+/g, "")
+      .toUpperCase()
+      .slice(0, 20);
 
     const { data: golfCourse, error: golfError } =
       await supabaseAdmin
         .from("golf_courses")
         .insert({
           name: golfCourseName,
-          golf_course_id: golfCourseId, // ✅ これが今回の修正ポイント
+          code,
         })
-        .select()
+        .select("id, name, code")
         .single();
 
-    if (golfError) throw golfError;
+    if (golfError) {
+      throw golfError;
+    }
 
-    /* ✅ ② Auth ユーザー作成 */
+    /* ============================
+     * ② Auth ユーザー作成
+     * ============================ */
+
     const { data: userData, error: authError } =
       await supabaseAdmin.auth.admin.createUser({
         email,
@@ -37,27 +61,52 @@ export async function POST(req: Request) {
         email_confirm: true,
       });
 
-    if (authError) throw authError;
+    if (authError) {
+      throw authError;
+    }
 
     const userId = userData.user.id;
 
-    /* ✅ ③ profiles 作成（golf_course_id で紐付ける） */
+    /* ============================
+     * ③ profiles 作成
+     * ============================ */
+
     const { error: profileError } =
-      await supabaseAdmin.from("profiles").insert({
-        id: userId,
-        name,
-        role,
-        golf_course_id: golfCourseId, // ✅ id ではなく golf_course_id
-      });
+      await supabaseAdmin
+        .from("profiles")
+        .insert({
+          id: userId,
+          name,
+          role,
+          golf_course_id: golfCourse.id, // ← DBが生成した id を使う
+        });
 
-    if (profileError) throw profileError;
+    if (profileError) {
+      throw profileError;
+    }
 
-    return NextResponse.json({ success: true });
+    /* ============================
+     * 完了
+     * ============================ */
+
+    return NextResponse.json({
+      success: true,
+      golfCourse: {
+        id: golfCourse.id,
+        name: golfCourse.name,
+        code: golfCourse.code,
+      },
+      userId,
+    });
 
   } catch (error: any) {
-    console.error(error);
+    console.error("create-user error:", error);
+
     return NextResponse.json(
-      { error: error.message },
+      {
+        success: false,
+        error: error.message ?? "Unknown error",
+      },
       { status: 500 }
     );
   }
