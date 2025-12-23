@@ -19,6 +19,7 @@ export async function POST(req: Request) {
       name,
       role,
       golfCourseName,
+      golfCourseCode,
     } = body;
 
     /* ============================
@@ -29,6 +30,15 @@ export async function POST(req: Request) {
       throw new Error("golfCourseName is required");
     }
 
+    if (!golfCourseCode) {
+      throw new Error("URL（code）は必須です");
+    }
+    
+    // 英数字・ハイフンのみ許可
+    if (!/^[a-zA-Z0-9-]+$/.test(golfCourseCode)) {
+      throw new Error("URLは英数字とハイフンのみ使用できます");
+    }
+
     // code は NOT NULL のため必ず生成する
     // 例: "ゴルフ場B" → "GOLF場B" → "GOLF場B"
     const code = golfCourseName
@@ -36,17 +46,22 @@ export async function POST(req: Request) {
       .toUpperCase()
       .slice(0, 20);
 
-    const { data: golfCourse, error: golfError } =
+      const { data: golfCourse, error: golfError } =
       await supabaseAdmin
         .from("golf_courses")
         .insert({
           name: golfCourseName,
-          code,
+          code: golfCourseCode,
         })
         .select("id, name, code")
         .single();
-
+    
+    // 👇 ここに入れる
     if (golfError) {
+      // 23505 = unique_violation
+      if ((golfError as any).code === "23505") {
+        throw new Error("このURLは既に使用されています");
+      }
       throw golfError;
     }
 

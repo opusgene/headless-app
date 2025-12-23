@@ -9,6 +9,7 @@ export default function NewUserPage() {
     name: "",
     role: "course_admin",
     golfCourseName: "",
+    golfCourseCode: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,6 +68,18 @@ export default function NewUserPage() {
             setForm({
               ...form,
               golfCourseName: e.target.value,
+            })
+          }
+        />
+        
+        <input
+          placeholder="公開URL（英数字・例: golfb）"
+          className="border p-2 w-full"
+          value={form.golfCourseCode}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              golfCourseCode: e.target.value,
             })
           }
         />
