@@ -1,4 +1,5 @@
 // app/(admin)/layout.tsx
+"use client";
 
 import { ReactNode } from "react";
 import { useRouter } from "next/navigation";
