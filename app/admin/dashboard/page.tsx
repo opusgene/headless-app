@@ -69,50 +69,6 @@ export default function Dashboard() {
     );
   };
 
-  // return (
-  //   <div className="p-8">
-  //     <h1 className="text-2xl font-bold">管理画面</h1>
-  //     <p className="mt-4">
-  //       ログイン中: {profile.name} ({profile.role})
-  //     </p>
-
-  //     {/* super_admin の表示区分 */}
-  //     {profile.role === "super_admin" ? (
-  //       <div className="mt-6">
-  //         <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
-
-  //         <select
-  //           className="border p-2 rounded"
-  //           value={selectedCourseId ?? ""}
-  //           onChange={(e) => setSelectedCourseId(e.target.value)}
-  //         >
-  //           <option value="">選択してください</option>
-
-  //           {courses.map((course) => (
-  //             <option key={course.id} value={course.golf_course_id}>
-  //               {course.name}
-  //             </option>
-  //           ))}
-  //         </select>
-
-  //         {selectedCourseId && (
-  //           <div className="mt-6">
-  //             <h2 className="text-lg font-semibold">
-  //               選択されたゴルフ場のデータ
-  //             </h2>
-  //             {renderCourseData(selectedCourseId)}
-  //           </div>
-  //         )}
-  //       </div>
-  //     ) : (
-  //       // course_admin の表示区分
-  //       <div className="mt-6">
-  //         <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-  //         {renderCourseData(profile.golf_course_id)}
-  //       </div>
-  //     )}
-  //   </div>
-  // );
   return (
     <div className="flex flex-col h-screen">
       {/* ヘッダー */}
@@ -140,7 +96,7 @@ export default function Dashboard() {
         <main className="flex-1 p-8 overflow-y-auto">
           {/* ↓↓↓ ここから下は、今の中身をほぼそのまま ↓↓↓ */}
 
-          <h1 className="text-2xl font-bold">ダッシュボード</h1>
+          <h1 className="text-2xl font-bold">ダッシュボード！</h1>
 
           {/* super_admin の表示区分 */}
           {profile.role === "super_admin" ? (
