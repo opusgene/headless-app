@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
-import "./globals.css";
+import "../globals.css";
 
 export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null);
