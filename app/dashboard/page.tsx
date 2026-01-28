@@ -114,8 +114,7 @@ export default function Dashboard() {
   //   </div>
   // );
   return (
-    // <div className="flex flex-col h-screen">
-    <div className="bg-red-500 p-10 text-white">
+    <div className="flex flex-col h-screen">
       {/* ヘッダー */}
       <header className="h-14 border-b px-6 flex items-center">
         <span className="font-bold">管理画面</span>
