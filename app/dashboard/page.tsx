@@ -68,48 +68,118 @@ export default function Dashboard() {
     );
   };
 
+  // return (
+  //   <div className="p-8">
+  //     <h1 className="text-2xl font-bold">管理画面</h1>
+  //     <p className="mt-4">
+  //       ログイン中: {profile.name} ({profile.role})
+  //     </p>
+
+  //     {/* super_admin の表示区分 */}
+  //     {profile.role === "super_admin" ? (
+  //       <div className="mt-6">
+  //         <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
+
+  //         <select
+  //           className="border p-2 rounded"
+  //           value={selectedCourseId ?? ""}
+  //           onChange={(e) => setSelectedCourseId(e.target.value)}
+  //         >
+  //           <option value="">選択してください</option>
+
+  //           {courses.map((course) => (
+  //             <option key={course.id} value={course.golf_course_id}>
+  //               {course.name}
+  //             </option>
+  //           ))}
+  //         </select>
+
+  //         {selectedCourseId && (
+  //           <div className="mt-6">
+  //             <h2 className="text-lg font-semibold">
+  //               選択されたゴルフ場のデータ
+  //             </h2>
+  //             {renderCourseData(selectedCourseId)}
+  //           </div>
+  //         )}
+  //       </div>
+  //     ) : (
+  //       // course_admin の表示区分
+  //       <div className="mt-6">
+  //         <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
+  //         {renderCourseData(profile.golf_course_id)}
+  //       </div>
+  //     )}
+  //   </div>
+  // );
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold">管理画面</h1>
-      <p className="mt-4">
-        ログイン中: {profile.name} ({profile.role})
-      </p>
+    <div className="flex flex-col h-screen">
+      {/* ヘッダー */}
+      <header className="h-14 border-b px-6 flex items-center">
+        <span className="font-bold">管理画面</span>
+        <span className="ml-auto text-sm text-gray-600">
+          {profile.name} ({profile.role})
+        </span>
+      </header>
 
-      {/* super_admin の表示区分 */}
-      {profile.role === "super_admin" ? (
-        <div className="mt-6">
-          <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
+      {/* ボディ */}
+      <div className="flex flex-1">
+        {/* サイドメニュー */}
+        <aside className="w-64 border-r p-4">
+          <ul className="space-y-2">
+            <li className="font-semibold">ダッシュボード</li>
+            <li className="text-gray-500">ゴルフ場管理</li>
+            <li className="text-gray-500">HDCP表</li>
+            <li className="text-gray-500">チャンピオンボード</li>
+            <li className="text-gray-500">設定</li>
+          </ul>
+        </aside>
 
-          <select
-            className="border p-2 rounded"
-            value={selectedCourseId ?? ""}
-            onChange={(e) => setSelectedCourseId(e.target.value)}
-          >
-            <option value="">選択してください</option>
+        {/* メイン表示エリア */}
+        <main className="flex-1 p-8 overflow-y-auto">
+          {/* ↓↓↓ ここから下は、今の中身をほぼそのまま ↓↓↓ */}
 
-            {courses.map((course) => (
-              <option key={course.id} value={course.golf_course_id}>
-                {course.name}
-              </option>
-            ))}
-          </select>
+          <h1 className="text-2xl font-bold">ダッシュボード</h1>
 
-          {selectedCourseId && (
+          {/* super_admin の表示区分 */}
+          {profile.role === "super_admin" ? (
             <div className="mt-6">
-              <h2 className="text-lg font-semibold">
-                選択されたゴルフ場のデータ
-              </h2>
-              {renderCourseData(selectedCourseId)}
+              <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
+
+              <select
+                className="border p-2 rounded"
+                value={selectedCourseId ?? ""}
+                onChange={(e) => setSelectedCourseId(e.target.value)}
+              >
+                <option value="">選択してください</option>
+
+                {courses.map((course) => (
+                  <option key={course.id} value={course.golf_course_id}>
+                    {course.name}
+                  </option>
+                ))}
+              </select>
+
+              {selectedCourseId && (
+                <div className="mt-6">
+                  <h2 className="text-lg font-semibold">
+                    選択されたゴルフ場のデータ
+                  </h2>
+                  {renderCourseData(selectedCourseId)}
+                </div>
+              )}
+            </div>
+          ) : (
+            // course_admin の表示区分
+            <div className="mt-6">
+              <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
+              {renderCourseData(profile.golf_course_id)}
             </div>
           )}
-        </div>
-      ) : (
-        // course_admin の表示区分
-        <div className="mt-6">
-          <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-          {renderCourseData(profile.golf_course_id)}
-        </div>
-      )}
+
+          {/* ↑↑↑ ここまで既存ロジック ↑↑↑ */}
+        </main>
+      </div>
     </div>
   );
 }
