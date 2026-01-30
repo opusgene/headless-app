@@ -13,7 +13,7 @@ export default function LoginPage() {
     e.preventDefault();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) setError(error.message);
-    else router.push("/dashboard");
+    else router.push("admin/dashboard");
   };
 
   return (
