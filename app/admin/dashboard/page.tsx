@@ -56,7 +56,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold">ダッシュボード</h1>
+      <h1 className="text-2xl font-bold">ダッシュボード！</h1>
 
       {profile.role === "super_admin" ? (
         <div className="mt-6">
