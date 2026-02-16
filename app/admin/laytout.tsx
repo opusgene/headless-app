@@ -5,23 +5,29 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 
+type Profile = {
+  id: string;
+  name: string;
+  role: string;
+};
+
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    (async () => {
-      // 認証チェック
+    const load = async () => {
       const { data } = await supabase.auth.getUser();
       const user = data.user;
 
       if (!user) {
-        router.push("/login");
+        router.replace("/login");
         return;
       }
 
-      // プロフィール取得
       const { data: profileData } = await supabase
         .from("profiles")
         .select("*")
@@ -29,10 +35,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         .single();
 
       setProfile(profileData);
-    })();
-  }, [router]);
+      setLoading(false);
+    };
 
-  if (!profile) return <div>読み込み中...</div>;
+    load();
+  }, [router]);
 
   const menu = [
     { label: "ダッシュボード", href: "/admin/dashboard" },
@@ -50,7 +57,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <span className="font-bold">Golf Admin</span>
 
         <span className="ml-auto text-sm text-gray-600">
-          {profile.name} ({profile.role})
+          {loading ? "読み込み中..." : `${profile?.name} (${profile?.role})`}
         </span>
       </header>
 
@@ -82,7 +89,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
         {/* メイン */}
         <main className="flex-1 p-8 overflow-y-auto bg-gray-100">
-          {children}
+          {loading ? (
+            <div>読み込み中...</div>
+          ) : (
+            children
+          )}
         </main>
       </div>
     </div>
