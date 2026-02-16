@@ -1,3 +1,4 @@
+console.log("ADMIN LAYOUT");
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
