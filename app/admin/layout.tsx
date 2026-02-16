@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
+import '../globals.css'; // TailwindのグローバルCSS読み込み
 
 type Profile = {
   id: string;
