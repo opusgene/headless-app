@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
-import '../globals.css'; // TailwindのグローバルCSS読み込み
+import "../globals.css"; // TailwindのグローバルCSS読み込み
 
 type Profile = {
   id: string;
@@ -54,7 +54,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col h-screen">
       {/* ヘッダー */}
-      <header className="h-14 border-b px-6 flex items-center bg-white">
+      <header className="h-14 border-b border-gray-300 px-6 flex items-center bg-gray-200">
         <span className="font-bold">Golf Admin</span>
 
         <span className="ml-auto text-sm text-gray-600">
@@ -65,7 +65,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {/* ボディ */}
       <div className="flex flex-1">
         {/* サイドバー */}
-        <aside className="w-64 border-r p-4 bg-gray-50">
+        <aside className="w-64 border-r border-gray-300 p-4 bg-gray-100">
           <ul className="space-y-1">
             {menu.map((item) => {
               const active = pathname.startsWith(item.href);
