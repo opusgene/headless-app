@@ -54,7 +54,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col h-screen">
       {/* ヘッダー */}
-      <header className="h-14 border-b border-gray-300 px-6 flex items-center bg-gray-200">
+      <header className="h-14 border-b border-gray-300 px-6 flex items-center bg-gradient-to-b from-gray-100 to-gray-200">
         <span className="font-bold">Golf Admin</span>
 
         <span className="ml-auto text-sm text-gray-600">
@@ -65,7 +65,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {/* ボディ */}
       <div className="flex flex-1">
         {/* サイドバー */}
-        <aside className="w-64 border-r border-gray-300 p-4 bg-gray-100">
+        <aside className="w-64 border-r border-gray-400 p-4 bg-gray-300">
           <ul className="space-y-1">
             {menu.map((item) => {
               const active = pathname.startsWith(item.href);
