@@ -4,85 +4,87 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  const [profile, setProfile] = useState<any>(null);
-  const router = useRouter();
-  const pathname = usePathname();
+  return <div style={{ border: "5px solid red" }}>{children}</div>;
 
-  useEffect(() => {
-    (async () => {
-      // 認証チェック
-      const { data } = await supabase.auth.getUser();
-      const user = data.user;
+  // const [profile, setProfile] = useState<any>(null);
+  // const router = useRouter();
+  // const pathname = usePathname();
 
-      if (!user) {
-        router.push("/login");
-        return;
-      }
+  // useEffect(() => {
+  //   (async () => {
+  //     // 認証チェック
+  //     const { data } = await supabase.auth.getUser();
+  //     const user = data.user;
 
-      // プロフィール取得
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
+  //     if (!user) {
+  //       router.push("/login");
+  //       return;
+  //     }
 
-      setProfile(profileData);
-    })();
-  }, [router]);
+  //     // プロフィール取得
+  //     const { data: profileData } = await supabase
+  //       .from("profiles")
+  //       .select("*")
+  //       .eq("id", user.id)
+  //       .single();
 
-  if (!profile) return <div>読み込み中...</div>;
+  //     setProfile(profileData);
+  //   })();
+  // }, [router]);
 
-  const menu = [
-    { label: "ダッシュボード", href: "/admin/dashboard" },
-    { label: "ゴルフ場管理", href: "/admin/courses" },
-    { label: "HDCP表", href: "/admin/hdcp" },
-    { label: "チャンピオンボード", href: "/admin/champions" },
-    { label: "ユーザー", href: "/admin/users" },
-    { label: "設定", href: "/admin/settings" },
-  ];
+  // if (!profile) return <div>読み込み中...</div>;
 
-  return (
-    <div className="flex flex-col h-screen">
-      {/* ヘッダー */}
-      <header className="h-14 border-b px-6 flex items-center bg-white">
-        <span className="font-bold">Golf Admin</span>
+  // const menu = [
+  //   { label: "ダッシュボード", href: "/admin/dashboard" },
+  //   { label: "ゴルフ場管理", href: "/admin/courses" },
+  //   { label: "HDCP表", href: "/admin/hdcp" },
+  //   { label: "チャンピオンボード", href: "/admin/champions" },
+  //   { label: "ユーザー", href: "/admin/users" },
+  //   { label: "設定", href: "/admin/settings" },
+  // ];
 
-        <span className="ml-auto text-sm text-gray-600">
-          {profile.name} ({profile.role})
-        </span>
-      </header>
+  // return (
+  //   <div className="flex flex-col h-screen">
+  //     {/* ヘッダー */}
+  //     <header className="h-14 border-b px-6 flex items-center bg-white">
+  //       <span className="font-bold">Golf Admin</span>
 
-      {/* ボディ */}
-      <div className="flex flex-1">
-        {/* サイドバー */}
-        <aside className="w-64 border-r p-4 bg-gray-50">
-          <ul className="space-y-1">
-            {menu.map((item) => {
-              const active = pathname.startsWith(item.href);
+  //       <span className="ml-auto text-sm text-gray-600">
+  //         {profile.name} ({profile.role})
+  //       </span>
+  //     </header>
 
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`block px-3 py-2 rounded text-sm ${
-                      active
-                        ? "bg-blue-600 text-white font-semibold"
-                        : "text-gray-700 hover:bg-gray-200"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </aside>
+  //     {/* ボディ */}
+  //     <div className="flex flex-1">
+  //       {/* サイドバー */}
+  //       <aside className="w-64 border-r p-4 bg-gray-50">
+  //         <ul className="space-y-1">
+  //           {menu.map((item) => {
+  //             const active = pathname.startsWith(item.href);
 
-        {/* メイン */}
-        <main className="flex-1 p-8 overflow-y-auto bg-gray-100">
-          {children}
-        </main>
-      </div>
-    </div>
-  );
+  //             return (
+  //               <li key={item.href}>
+  //                 <Link
+  //                   href={item.href}
+  //                   className={`block px-3 py-2 rounded text-sm ${
+  //                     active
+  //                       ? "bg-blue-600 text-white font-semibold"
+  //                       : "text-gray-700 hover:bg-gray-200"
+  //                   }`}
+  //                 >
+  //                   {item.label}
+  //                 </Link>
+  //               </li>
+  //             );
+  //           })}
+  //         </ul>
+  //       </aside>
+
+  //       {/* メイン */}
+  //       <main className="flex-1 p-8 overflow-y-auto bg-gray-100">
+  //         {children}
+  //       </main>
+  //     </div>
+  //   </div>
+  // );
 }
