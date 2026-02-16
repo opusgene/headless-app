@@ -2,59 +2,94 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-
-type Stats = {
-  users: number;
-  courses: number;
-  tournaments: number;
-};
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState<Stats>({
-    users: 0,
-    courses: 0,
-    tournaments: 0,
-  });
+  const [profile, setProfile] = useState<any>(null);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
-      const [usersRes, coursesRes, tournamentsRes] = await Promise.all([
-        supabase.from("profiles").select("id"),
-        supabase.from("courses").select("id"),
-        supabase.from("tournaments").select("id"),
-      ]);
+      // ---------- 認証取得 ----------
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
 
-      setStats({
-        users: usersRes.data?.length ?? 0,
-        courses: coursesRes.data?.length ?? 0,
-        tournaments: tournamentsRes.data?.length ?? 0,
-      });
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      // ---------- プロフィール取得 ----------
+      const { data: profilesData } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      setProfile(profilesData);
+
+      // ---------- ゴルフ場取得 ----------
+      const { data: coursesData } = await supabase
+        .from("golf_courses")
+        .select("*");
+
+      setCourses(coursesData ?? []);
     })();
-  }, []);
+  }, [router]);
+
+  if (!profile) return <div>読み込み中...</div>;
+
+  // ゴルフ場データ表示
+  const renderCourseData = (courseId: string) => {
+    const target = courses.find((c) => c.golf_course_id === courseId);
+    if (!target) return <p className="text-gray-500">該当データなし</p>;
+
+    return (
+      <div className="p-4 border rounded mt-4">
+        <p>名前: {target.name}</p>
+        <p>golf_course_id: {target.golf_course_id}</p>
+      </div>
+    );
+  };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">ダッシュボード</h1>
+    <>
+      <h1 className="text-2xl font-bold">ダッシュボード</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* ユーザー数 */}
-        <div className="bg-white p-6 rounded-xl shadow">
-          <div className="text-sm text-gray-500 mb-1">ユーザー数</div>
-          <div className="text-3xl font-bold">{stats.users}</div>
-        </div>
+      {profile.role === "super_admin" ? (
+        <div className="mt-6">
+          <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
 
-        {/* ゴルフ場数 */}
-        <div className="bg-white p-6 rounded-xl shadow">
-          <div className="text-sm text-gray-500 mb-1">ゴルフ場数</div>
-          <div className="text-3xl font-bold">{stats.courses}</div>
-        </div>
+          <select
+            className="border p-2 rounded"
+            value={selectedCourseId ?? ""}
+            onChange={(e) => setSelectedCourseId(e.target.value)}
+          >
+            <option value="">選択してください</option>
+            {courses.map((course) => (
+              <option key={course.id} value={course.golf_course_id}>
+                {course.name}
+              </option>
+            ))}
+          </select>
 
-        {/* 大会数 */}
-        <div className="bg-white p-6 rounded-xl shadow">
-          <div className="text-sm text-gray-500 mb-1">大会数</div>
-          <div className="text-3xl font-bold">{stats.tournaments}</div>
+          {selectedCourseId && (
+            <div className="mt-6">
+              <h2 className="text-lg font-semibold">
+                選択されたゴルフ場のデータ
+              </h2>
+              {renderCourseData(selectedCourseId)}
+            </div>
+          )}
         </div>
-      </div>
-    </div>
+      ) : (
+        <div className="mt-6">
+          <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
+          {renderCourseData(profile.golf_course_id)}
+        </div>
+      )}
+    </>
   );
 }
