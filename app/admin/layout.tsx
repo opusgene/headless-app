@@ -65,7 +65,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {/* ボディ */}
       <div className="flex flex-1">
         {/* サイドバー */}
-        <aside className="w-64 border-r border-gray-400 p-4 bg-gray-300">
+        <aside className="w-64 border-r border-gray-300 p-4 bg-gradient-to-b from-gray-200 to-gray-300">
           <ul className="space-y-1">
             {menu.map((item) => {
               const active = pathname.startsWith(item.href);
