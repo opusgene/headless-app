@@ -45,9 +45,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const menu = [
     { label: "ダッシュボード", href: "/admin/dashboard" },
     { label: "ゴルフ場管理", href: "/admin/courses" },
-    { label: "HDCP表", href: "/admin/hdcp" },
+    { label: "HDCP表", href: "/admin/dashboard/hdcp" },
     { label: "チャンピオンボード", href: "/admin/champions" },
-    { label: "ユーザー", href: "/admin/users" },
+    { label: "ユーザー", href: "/admin/dashboard/users" },
     { label: "設定", href: "/admin/settings" },
   ];
 
