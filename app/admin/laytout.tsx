@@ -1,4 +1,3 @@
-console.log("ADMIN LAYOUT");
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
@@ -67,29 +66,35 @@ export default function AdminLayout({
             {menu.map((item) => {
               const active = pathname.startsWith(item.href);
 
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`block px-3 py-2 rounded text-sm ${
-                      active
-                        ? "bg-blue-600 text-white font-semibold"
-                        : "text-gray-700 hover:bg-gray-200"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </aside>
+  //             return (
+  //               <li key={item.href}>
+  //                 <Link
+  //                   href={item.href}
+  //                   className={`block px-3 py-2 rounded text-sm ${
+  //                     active
+  //                       ? "bg-blue-600 text-white font-semibold"
+  //                       : "text-gray-700 hover:bg-gray-200"
+  //                   }`}
+  //                 >
+  //                   {item.label}
+  //                 </Link>
+  //               </li>
+  //             );
+  //           })}
+  //         </ul>
+  //       </aside>
 
-        {/* メイン */}
-        <main className="flex-1 p-8 overflow-y-auto bg-gray-100">
-          {children}
-        </main>
-      </div>
+  //       {/* メイン */}
+  //       <main className="flex-1 p-8 overflow-y-auto bg-gray-100">
+  //         {children}
+  //       </main>
+  //     </div>
+  //   </div>
+  // );
+  return (
+    <div style={{ background: "red", color: "white", padding: 40 }}>
+      ADMIN LAYOUT
+      {children}
     </div>
   );
 }
