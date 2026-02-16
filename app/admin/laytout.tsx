@@ -89,11 +89,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
         {/* メイン */}
         <main className="flex-1 p-8 overflow-y-auto bg-gray-100">
-          {loading ? (
-            <div>読み込み中...</div>
-          ) : (
-            children
-          )}
+          {loading ? <div>読み込み中...</div> : children}
         </main>
       </div>
     </div>
