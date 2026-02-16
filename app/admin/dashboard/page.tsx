@@ -1,10 +1,10 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
-import "@/app/globals.css";
 
-export default function Dashboard() {
+export default function DashboardPage() {
   const [profile, setProfile] = useState<any>(null);
   const [courses, setCourses] = useState<any[]>([]);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
@@ -12,8 +12,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     (async () => {
-      console.log("🔥 useEffect started");
-
       // ---------- 認証取得 ----------
       const { data: userData } = await supabase.auth.getUser();
       const user = userData.user;
@@ -32,33 +30,20 @@ export default function Dashboard() {
 
       setProfile(profilesData);
 
-      // ---------- ゴルフ場情報を取得（RLSなし） ----------
-      const { data: coursesData, error: coursesError } = await supabase
+      // ---------- ゴルフ場取得 ----------
+      const { data: coursesData } = await supabase
         .from("golf_courses")
         .select("*");
 
-      console.log("🎯 golf_courses:", coursesData, coursesError);
-
-      if (coursesData) {
-        setCourses(coursesData);
-      }
+      setCourses(coursesData ?? []);
     })();
   }, [router]);
 
   if (!profile) return <div>読み込み中...</div>;
 
-  // ---- デバッグログ ----
-  console.log("🎯 全 courses =", courses);
-  console.log("🎯 selectedCourseId =", selectedCourseId);
-  console.log(
-    "🎯 フィルタ結果 =",
-    courses.filter((c) => c.golf_course_id === selectedCourseId)
-  );
-
-  // ---- 共通: ゴルフ場データの表示関数 ----
+  // ゴルフ場データ表示
   const renderCourseData = (courseId: string) => {
     const target = courses.find((c) => c.golf_course_id === courseId);
-    console.log("🎯 courseId =", courseId);
     if (!target) return <p className="text-gray-500">該当データなし</p>;
 
     return (
@@ -70,73 +55,41 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      {/* ヘッダー */}
-      <header className="h-14 border-b px-6 flex items-center">
-        <span className="font-bold">管理画面</span>
-        <span className="ml-auto text-sm text-gray-600">
-          {profile.name} ({profile.role})
-        </span>
-      </header>
+    <>
+      <h1 className="text-2xl font-bold">ダッシュボード</h1>
 
-      {/* ボディ */}
-      <div className="flex flex-1">
-        {/* サイドメニュー */}
-        <aside className="w-64 border-r p-4">
-          <ul className="space-y-2">
-            <li className="font-semibold">ダッシュボード</li>
-            <li className="text-gray-500">ゴルフ場管理</li>
-            <li className="text-gray-500">HDCP表</li>
-            <li className="text-gray-500">チャンピオンボード</li>
-            <li className="text-gray-500">設定</li>
-          </ul>
-        </aside>
+      {profile.role === "super_admin" ? (
+        <div className="mt-6">
+          <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
 
-        {/* メイン表示エリア */}
-        <main className="flex-1 p-8 overflow-y-auto">
-          {/* ↓↓↓ ここから下は、今の中身をほぼそのまま ↓↓↓ */}
+          <select
+            className="border p-2 rounded"
+            value={selectedCourseId ?? ""}
+            onChange={(e) => setSelectedCourseId(e.target.value)}
+          >
+            <option value="">選択してください</option>
+            {courses.map((course) => (
+              <option key={course.id} value={course.golf_course_id}>
+                {course.name}
+              </option>
+            ))}
+          </select>
 
-          <h1 className="text-2xl font-bold">ダッシュボード！</h1>
-
-          {/* super_admin の表示区分 */}
-          {profile.role === "super_admin" ? (
+          {selectedCourseId && (
             <div className="mt-6">
-              <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
-
-              <select
-                className="border p-2 rounded"
-                value={selectedCourseId ?? ""}
-                onChange={(e) => setSelectedCourseId(e.target.value)}
-              >
-                <option value="">選択してください</option>
-
-                {courses.map((course) => (
-                  <option key={course.id} value={course.golf_course_id}>
-                    {course.name}
-                  </option>
-                ))}
-              </select>
-
-              {selectedCourseId && (
-                <div className="mt-6">
-                  <h2 className="text-lg font-semibold">
-                    選択されたゴルフ場のデータ
-                  </h2>
-                  {renderCourseData(selectedCourseId)}
-                </div>
-              )}
-            </div>
-          ) : (
-            // course_admin の表示区分
-            <div className="mt-6">
-              <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-              {renderCourseData(profile.golf_course_id)}
+              <h2 className="text-lg font-semibold">
+                選択されたゴルフ場のデータ
+              </h2>
+              {renderCourseData(selectedCourseId)}
             </div>
           )}
-
-          {/* ↑↑↑ ここまで既存ロジック ↑↑↑ */}
-        </main>
-      </div>
-    </div>
+        </div>
+      ) : (
+        <div className="mt-6">
+          <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
+          {renderCourseData(profile.golf_course_id)}
+        </div>
+      )}
+    </>
   );
 }
