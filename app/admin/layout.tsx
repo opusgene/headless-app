@@ -51,12 +51,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const menu: MenuItem[] = [
     {
       label: "ダッシュボード",
-      href: "/admin/dashboard",
+      href: "/admin/dashboard/",
       roles: ["course_admin","super_admin"],
     },
     {
       label: "ゴルフ場の新規作成",
-      href: "/admin/dashboard/users/new",
+      href: "/admin/dashboard/users/new/",
       roles: ["super_admin"],
     },
     {
