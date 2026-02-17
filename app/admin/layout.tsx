@@ -90,8 +90,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         {/* サイドバー */}
         <aside className="w-64 border-r border-gray-300 p-4 bg-gradient-to-b from-gray-200 to-gray-300">
           <ul className="space-y-1">
-            {menu.map((item) => {
-              const active = pathname === item.href;
+            {visibleMenu.map((item) => {
+              const active = pathname.startsWith(item.href);
 
               return (
                 <li key={item.href}>
