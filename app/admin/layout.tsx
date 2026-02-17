@@ -12,6 +12,12 @@ type Profile = {
   role: string;
 };
 
+type MenuItem = {
+  label: string;
+  href: string;
+  roles: string[];
+};
+
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,14 +48,31 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     load();
   }, [router]);
 
-  const menu = [
-    { label: "ダッシュボード", href: "/admin/dashboard", roles: ["course_admin"] },
-    { label: "ゴルフ場管理", href: "/admin/courses" },
-    { label: "HDCP表", href: "/admin/dashboard/hdcp" },
-    { label: "チャンピオンボード", href: "/admin/champions" },
-    { label: "ユーザー", href: "/admin/dashboard/users" },
-    { label: "設定", href: "/admin/settings" },
+  const menu: MenuItem[] = [
+    {
+      label: "ダッシュボード",
+      href: "/admin/dashboard",
+      roles: ["super_admin"],
+    },
+    { label: "ゴルフ場管理", href: "/admin/courses", roles: ["course_admin"] },
+    { label: "HDCP表", href: "/admin/dashboard/hdcp", roles: ["course_admin"] },
+    {
+      label: "チャンピオンボード",
+      href: "/admin/champions",
+      roles: ["course_admin"],
+    },
+    {
+      label: "ユーザー",
+      href: "/admin/dashboard/users",
+      roles: ["course_admin"],
+    },
+    { label: "設定", href: "/admin/settings", roles: ["course_admin"] },
   ];
+
+  // 👇 roleでフィルタ
+  const visibleMenu = menu.filter(
+    (item) => profile && item.roles.includes(profile.role)
+  );
 
   return (
     <div className="flex flex-col h-screen">
