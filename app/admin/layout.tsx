@@ -43,7 +43,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }, [router]);
 
   const menu = [
-    { label: "ダッシュボード", href: "/admin/dashboard" },
+    { label: "ダッシュボード", href: "/admin/dashboard", roles: ["course_admin"] },
     { label: "ゴルフ場管理", href: "/admin/courses" },
     { label: "HDCP表", href: "/admin/dashboard/hdcp" },
     { label: "チャンピオンボード", href: "/admin/champions" },
