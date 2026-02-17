@@ -56,33 +56,33 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     },
     {
       label: "ゴルフ場の新規作成",
-      href: "/admin/dashboard",
+      href: "/admin/dashboard/users/new",
       roles: ["super_admin"],
     },
     {
       label: "ゴルフ場のアプリケーション管理",
-      href: "/admin/dashboard",
+      href: "/admin/",
       roles: ["super_admin"],
     },
     {
       label: "ゴルフ場の担当者としてログイン",
-      href: "/admin/dashboard",
+      href: "/admin/",
       roles: ["super_admin"],
     },
     {
       label: "ゴルフ場へメッセージ送信",
-      href: "/admin/dashboard",
+      href: "/admin/",
       roles: ["super_admin"],
     },
-    { label: "メッセージの確認", href: "/admin/dashboard", roles: ["course_admin"] },
+    { label: "メッセージの確認", href: "/admin/", roles: ["course_admin"] },
     {
       label: "基本設定の表示・編集",
-      href: "/admin/dashboard",
+      href: "/admin/",
       roles: ["course_admin"],
     },
     {
       label: "利用アプリケーションの表示・研修",
-      href: "/admin/dashboard/",
+      href: "/admin//",
       roles: ["course_admin"],
     },
     {
