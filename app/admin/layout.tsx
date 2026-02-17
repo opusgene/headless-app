@@ -52,21 +52,44 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     {
       label: "ダッシュボード",
       href: "/admin/dashboard",
+      roles: ["course_admin","super_admin"],
+    },
+    {
+      label: "ゴルフ場の新規作成",
+      href: "/admin/dashboard",
       roles: ["super_admin"],
     },
-    { label: "ゴルフ場管理", href: "/admin/courses", roles: ["course_admin"] },
-    { label: "HDCP表", href: "/admin/dashboard/hdcp", roles: ["course_admin"] },
     {
-      label: "チャンピオンボード",
-      href: "/admin/champions",
+      label: "ゴルフ場のアプリケーション管理",
+      href: "/admin/dashboard",
+      roles: ["super_admin"],
+    },
+    {
+      label: "ゴルフ場の担当者としてログイン",
+      href: "/admin/dashboard",
+      roles: ["super_admin"],
+    },
+    {
+      label: "ゴルフ場へメッセージ送信",
+      href: "/admin/dashboard",
+      roles: ["super_admin"],
+    },
+    { label: "メッセージの確認", href: "/admin/dashboard", roles: ["course_admin"] },
+    {
+      label: "基本設定の表示・編集",
+      href: "/admin/dashboard",
       roles: ["course_admin"],
     },
     {
-      label: "ユーザー",
-      href: "/admin/dashboard/users",
+      label: "利用アプリケーションの表示・研修",
+      href: "/admin/dashboard/",
       roles: ["course_admin"],
     },
-    { label: "設定", href: "/admin/settings", roles: ["course_admin"] },
+    {
+      label: "ログイン",
+      href: "/admin/login",
+      roles: ["course_admin","super_admin"],
+    },
   ];
 
   // 👇 roleでフィルタ
