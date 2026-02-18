@@ -61,7 +61,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     },
     {
       label: "ゴルフ場のアプリケーション管理",
-      href: "/admin/test",
+      href: "/admin/course",
       roles: ["super_admin"],
     },
     {
