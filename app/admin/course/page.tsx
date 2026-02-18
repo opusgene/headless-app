@@ -17,7 +17,7 @@ export default function CoursesPage() {
   useEffect(() => {
     const loadCourses = async () => {
       const { data, error } = await supabase
-        .from("golf_course")
+        .from("golf_courses")
         .select("*")
         .order("name");
 
