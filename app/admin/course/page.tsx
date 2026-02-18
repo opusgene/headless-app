@@ -41,7 +41,6 @@ export default function CoursesPage() {
         <table className="w-full border border-gray-300 bg-white">
           <thead className="bg-gray-100">
             <tr>
-              <th className="p-3 border">ID</th>
               <th className="p-3 border">ゴルフ場名</th>
             </tr>
           </thead>
@@ -49,7 +48,6 @@ export default function CoursesPage() {
           <tbody>
             {courses.map((course) => (
               <tr key={course.id} className="hover:bg-gray-50 cursor-pointer">
-                <td className="p-3 border">{course.id}</td>
                 <td className="p-3 border">
                   <Link
                     href={`/admin/courses/${course.id}`}
