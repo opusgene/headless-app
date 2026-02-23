@@ -74,25 +74,8 @@ export default function CourseApplicationsPage() {
       await supabase.from("golf_course_applications").insert(inserts);
     }
 
-    const save = async () => {
-      await supabase
-        .from("golf_course_applications")
-        .delete()
-        .eq("golf_course_id", courseId);
-
-      const inserts = checked.map((appId) => ({
-        golf_course_id: courseId,
-        application_id: appId,
-      }));
-
-      if (inserts.length > 0) {
-        await supabase.from("golf_course_applications").insert(inserts);
-      }
-
-      if (confirm("保存しました")) {
-        router.push("/admin/courses");
-      }
-    };
+    alert("保存しました");
+    router.push("/admin/course");
   };
 
   return (
