@@ -43,16 +43,16 @@ export default function CourseApplicationsPage() {
         .select("application_id")
         .eq("golf_course_id", courseId);
 
-      setChecked(relations?.map(r => r.application_id) ?? []);
+      setChecked(relations?.map((r) => r.application_id) ?? []);
     };
 
     load();
   }, [courseId]);
 
   const toggle = (appId: string) => {
-    setChecked(prev =>
+    setChecked((prev) =>
       prev.includes(appId)
-        ? prev.filter(id => id !== appId)
+        ? prev.filter((id) => id !== appId)
         : [...prev, appId]
     );
   };
@@ -65,7 +65,7 @@ export default function CourseApplicationsPage() {
       .eq("golf_course_id", courseId);
 
     // 再insert
-    const inserts = checked.map(appId => ({
+    const inserts = checked.map((appId) => ({
       golf_course_id: courseId,
       application_id: appId,
     }));
@@ -74,18 +74,33 @@ export default function CourseApplicationsPage() {
       await supabase.from("golf_course_applications").insert(inserts);
     }
 
-    alert("保存しました");
-    router.refresh();
+    const save = async () => {
+      await supabase
+        .from("golf_course_applications")
+        .delete()
+        .eq("golf_course_id", courseId);
+
+      const inserts = checked.map((appId) => ({
+        golf_course_id: courseId,
+        application_id: appId,
+      }));
+
+      if (inserts.length > 0) {
+        await supabase.from("golf_course_applications").insert(inserts);
+      }
+
+      if (confirm("保存しました")) {
+        router.push("/admin/courses");
+      }
+    };
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">
-        {courseName} のアプリ管理
-      </h1>
+      <h1 className="text-2xl font-bold mb-6">{courseName} のアプリ管理</h1>
 
       <div className="space-y-3">
-        {apps.map(app => (
+        {apps.map((app) => (
           <label key={app.id} className="flex items-center gap-2">
             <input
               type="checkbox"
