@@ -87,7 +87,7 @@ export default function CoursesPage() {
               <tr key={course.id} className="hover:bg-gray-50 cursor-pointer">
                 <td className="p-3 border">
                   <Link
-                    href={`/admin/courses/${course.id}`}
+                    href={`/admin/course/${course.id}`}
                     className="text-blue-600 hover:underline"
                   >
                     {course.name}
