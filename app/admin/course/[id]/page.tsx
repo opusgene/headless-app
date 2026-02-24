@@ -97,7 +97,7 @@ export default function CourseApplicationsPage() {
 
       <button
         onClick={save}
-        className="mt-6 px-4 py-2 bg-blue-600 text-white rounded"
+        className="mt-6 px-4 py-2 bg-blue-600 text-white rounded cursor-pointer"
       >
         保存
       </button>
