@@ -84,7 +84,7 @@ export default function CourseApplicationsPage() {
 
       <div className="space-y-3">
         {apps.map((app) => (
-          <label key={app.id} className="flex items-center gap-2">
+          <label key={app.id} className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={checked.includes(app.id)}
