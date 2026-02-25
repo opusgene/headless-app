@@ -4,11 +4,17 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 
+type Application = {
+  id: string;
+  name: string;
+};
+
 export default function DashboardPage() {
   const [profile, setProfile] = useState<any>(null);
   const [courses, setCourses] = useState<any[]>([]);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const router = useRouter();
+  const [apps, setApps] = useState<Application[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -87,7 +93,17 @@ export default function DashboardPage() {
       ) : (
         <div className="mt-6">
           <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-          {renderCourseData(profile.golf_course_id)}
+          {/* {renderCourseData(profile.golf_course_id)} */}
+          <div className="space-y-3">
+            {apps.map((app) => (
+              <label
+                key={app.id}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <p>{app.name}</p>
+              </label>
+            ))}
+          </div>
         </div>
       )}
     </>
