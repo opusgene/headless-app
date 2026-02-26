@@ -21,7 +21,7 @@ type CourseApp = {
   applications: {
     id: string;
     name: string;
-  }[];
+  } | null;
 };
 
 export default function DashboardPage() {
@@ -112,7 +112,7 @@ export default function DashboardPage() {
           ) : (
             <ul className="list-disc ml-5">
               {courseApps.map((rel) => (
-                <li key={rel.application_id}>{rel.applications?.[0]?.name}</li>
+                <li key={rel.application_id}>{rel.applications?.name}</li>
               ))}
             </ul>
           )}
