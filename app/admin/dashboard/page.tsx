@@ -96,7 +96,7 @@ export default function DashboardPage() {
 
   // ---------- ゴルフ場データ表示 ----------
   const renderCourseData = (courseId: string) => {
-    const target = courses.find((c) => c.golf_course_id === courseId);
+    const target = courses.find((c) => c.id === courseId);
     if (!target) return <p className="text-gray-500">該当データなし</p>;
 
     return (
