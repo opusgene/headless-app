@@ -137,7 +137,7 @@ export default function DashboardPage() {
           >
             <option value="">選択してください</option>
             {courses.map((course) => (
-              <option key={course.id} value={course.golf_course_id}>
+              <option key={course.id} value={course.id}>
                 {course.name}
               </option>
             ))}
