@@ -21,7 +21,7 @@ type CourseApp = {
   applications: {
     id: string;
     name: string;
-  }[];
+  } | null;
 };
 
 export default function DashboardPage() {
@@ -34,7 +34,7 @@ export default function DashboardPage() {
 
   // ---------- 初期ロード ----------
   useEffect(() => {
-    const loadInitial = async () => {
+    (async () => {
       // 認証
       const { data: userData } = await supabase.auth.getUser();
       const user = userData.user;
@@ -44,35 +44,23 @@ export default function DashboardPage() {
         return;
       }
 
-      // プロフィール取得
-      const { data: profileData, error: profileError } = await supabase
+      // プロフィール
+      const { data: profileData } = await supabase
         .from("profiles")
-        .select("id, role, golf_course_id")
+        .select("*")
         .eq("id", user.id)
         .single();
 
-      if (profileError || !profileData) {
-        console.error(profileError);
-        return;
-      }
-
       setProfile(profileData);
 
-      // ゴルフ場一覧取得
-      const { data: coursesData, error: coursesError } = await supabase
+      // ゴルフ場一覧
+      const { data: coursesData } = await supabase
         .from("golf_courses")
-        .select("id, name, golf_course_id")
+        .select("*")
         .order("name");
 
-      if (coursesError) {
-        console.error(coursesError);
-        return;
-      }
-
       setCourses(coursesData ?? []);
-    };
-
-    loadInitial();
+    })();
   }, [router]);
 
   // ---------- 選択ゴルフ場のアプリ取得 ----------
@@ -85,7 +73,7 @@ export default function DashboardPage() {
     if (!courseId) return;
 
     const loadApps = async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("golf_course_applications")
         .select(
           `
@@ -94,17 +82,11 @@ export default function DashboardPage() {
             id,
             name
           )
-          `
+        `
         )
         .eq("golf_course_id", courseId);
 
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      // キャストなしで代入
-      setCourseApps(data ?? []);
+      setCourseApps((data ?? []) as CourseApp[]);
     };
 
     loadApps();
@@ -130,9 +112,7 @@ export default function DashboardPage() {
           ) : (
             <ul className="list-disc ml-5">
               {courseApps.map((rel) => (
-                <li key={rel.application_id}>
-                  {rel.applications?.[0]?.name ?? "不明"}
-                </li>
+                <li key={rel.application_id}>{rel.applications?.name}</li>
               ))}
             </ul>
           )}
