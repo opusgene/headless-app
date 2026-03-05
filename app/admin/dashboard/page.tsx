@@ -16,14 +16,12 @@ type Course = {
   golf_course_id: string;
 };
 
-type Application = {
-  id: string;
-  name: string;
-};
-
 type CourseApp = {
   application_id: string;
-  applications: Application[] | null;
+  applications: {
+    id: string;
+    name: string;
+  }[] | null;
 };
 
 export default function DashboardPage() {
@@ -31,7 +29,6 @@ export default function DashboardPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const [courseApps, setCourseApps] = useState<CourseApp[]>([]);
-
   const router = useRouter();
 
   // ---------- 初期ロード ----------
@@ -56,7 +53,6 @@ export default function DashboardPage() {
         console.error(profileError);
         return;
       }
-
       setProfile(profileData);
 
       // ゴルフ場一覧取得
@@ -69,7 +65,6 @@ export default function DashboardPage() {
         console.error(coursesError);
         return;
       }
-
       setCourses(coursesData ?? []);
     };
 
@@ -88,22 +83,21 @@ export default function DashboardPage() {
     const loadApps = async () => {
       const { data, error } = await supabase
         .from("golf_course_applications")
-        .select(
-          `
+        .select(`
           application_id,
           applications (
             id,
             name
           )
-          `
-        )
+        `)
         .eq("golf_course_id", courseId);
 
       if (error) {
         console.error(error);
         return;
       }
-      console.log("courseApps", data);
+
+      console.log("courseApps data", data); // ← ここで取得結果を確認できます
       setCourseApps(data ?? []);
     };
 
@@ -114,11 +108,9 @@ export default function DashboardPage() {
 
   // ---------- ゴルフ場データ表示 ----------
   const renderCourseData = (courseId: string) => {
+    // ★ここを id ではなく golf_course_id で検索
     const target = courses.find((c) => c.golf_course_id === courseId);
-
-    if (!target) {
-      return <p className="text-gray-500">該当データなし</p>;
-    }
+    if (!target) return <p className="text-gray-500">該当データなし</p>;
 
     return (
       <div className="p-4 border rounded mt-4 space-y-2">
@@ -127,7 +119,6 @@ export default function DashboardPage() {
 
         <div className="mt-3">
           <p className="font-semibold">使用中のアプリケーション</p>
-
           {courseApps.length === 0 ? (
             <p className="text-gray-400 text-sm">なし</p>
           ) : (
@@ -152,14 +143,12 @@ export default function DashboardPage() {
       {profile.role === "super_admin" ? (
         <div className="mt-6">
           <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
-
           <select
             className="border p-2 rounded"
             value={selectedCourseId ?? ""}
             onChange={(e) => setSelectedCourseId(e.target.value)}
           >
             <option value="">選択してください</option>
-
             {courses.map((course) => (
               <option key={course.id} value={course.golf_course_id}>
                 {course.name}
@@ -172,7 +161,6 @@ export default function DashboardPage() {
               <h2 className="text-lg font-semibold">
                 選択されたゴルフ場のデータ
               </h2>
-
               {renderCourseData(selectedCourseId)}
             </div>
           )}
@@ -180,7 +168,6 @@ export default function DashboardPage() {
       ) : (
         <div className="mt-6">
           <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-
           {renderCourseData(profile.golf_course_id)}
         </div>
       )}
