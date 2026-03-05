@@ -21,7 +21,7 @@ type CourseApp = {
   applications: {
     id: string;
     name: string;
-  }[];
+  }[] | null;
 };
 
 export default function DashboardPage() {
