@@ -16,12 +16,14 @@ type Course = {
   golf_course_id: string;
 };
 
+type Application = {
+  id: string;
+  name: string;
+};
+
 type CourseApp = {
   application_id: string;
-  applications: {
-    id: string;
-    name: string;
-  }[] | null;
+  applications: Application[] | null;
 };
 
 export default function DashboardPage() {
@@ -35,7 +37,6 @@ export default function DashboardPage() {
   // ---------- 初期ロード ----------
   useEffect(() => {
     const loadInitial = async () => {
-      // 認証
       const { data: userData } = await supabase.auth.getUser();
       const user = userData.user;
 
@@ -103,7 +104,6 @@ export default function DashboardPage() {
         return;
       }
 
-      // キャストなしで代入
       setCourseApps(data ?? []);
     };
 
@@ -114,8 +114,11 @@ export default function DashboardPage() {
 
   // ---------- ゴルフ場データ表示 ----------
   const renderCourseData = (courseId: string) => {
-    const target = courses.find((c) => c.id === courseId);
-    if (!target) return <p className="text-gray-500">該当データなし</p>;
+    const target = courses.find((c) => c.golf_course_id === courseId);
+
+    if (!target) {
+      return <p className="text-gray-500">該当データなし</p>;
+    }
 
     return (
       <div className="p-4 border rounded mt-4 space-y-2">
@@ -156,8 +159,12 @@ export default function DashboardPage() {
             onChange={(e) => setSelectedCourseId(e.target.value)}
           >
             <option value="">選択してください</option>
+
             {courses.map((course) => (
-              <option key={course.id} value={course.id}>
+              <option
+                key={course.id}
+                value={course.golf_course_id}
+              >
                 {course.name}
               </option>
             ))}
@@ -168,6 +175,7 @@ export default function DashboardPage() {
               <h2 className="text-lg font-semibold">
                 選択されたゴルフ場のデータ
               </h2>
+
               {renderCourseData(selectedCourseId)}
             </div>
           )}
@@ -175,6 +183,7 @@ export default function DashboardPage() {
       ) : (
         <div className="mt-6">
           <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
+
           {renderCourseData(profile.golf_course_id)}
         </div>
       )}
