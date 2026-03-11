@@ -104,7 +104,7 @@ export default function DashboardPage() {
       console.log("courseApps data", data);
       console.log(JSON.stringify(data, null, 2));
 
-      // setCourseApps(data ?? []);
+      setCourseApps((data ?? []) as unknown as CourseApp[]);
     };
 
     loadApps();
