@@ -18,12 +18,10 @@ type Course = {
 
 type CourseApp = {
   application_id: string;
-  applications:
-    | {
-        id: string;
-        name: string;
-      }[]
-    | null;
+  applications: {
+    id: string;
+    name: string;
+  }[];
 };
 
 export default function DashboardPage() {
