@@ -78,7 +78,7 @@ export default function DashboardPage() {
     const courseId =
       profile?.role === "super_admin"
         ? selectedCourseId
-        : profile?.golf_course_id;
+        : profile?.id;
 
     if (!courseId) return;
 
