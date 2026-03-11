@@ -17,11 +17,11 @@ type Course = {
 };
 
 type CourseApp = {
-  application_id: string;
+  application_id: number;
   applications: {
-    id: string;
+    id: number;
     name: string;
-  }[];
+  } | null;
 };
 
 export default function DashboardPage() {
@@ -102,8 +102,9 @@ export default function DashboardPage() {
       }
 
       console.log("courseApps data", data);
+      console.log(JSON.stringify(data, null, 2));
 
-      setCourseApps(data ?? []);
+      // setCourseApps(data ?? []);
     };
 
     loadApps();
@@ -131,7 +132,7 @@ export default function DashboardPage() {
             <ul className="list-disc ml-5">
               {courseApps.map((rel) => (
                 <li key={rel.application_id}>
-                  {rel.applications?.[0]?.name ?? "不明"}{" "}
+                  {rel.applications?.name ?? "不明"}{" "}
                 </li>
               ))}
             </ul>
