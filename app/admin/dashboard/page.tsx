@@ -94,7 +94,8 @@ export default function DashboardPage() {
           )
         `
         )
-        .eq("golf_course_id", courseId);
+        .eq("golf_course_id", courseId)
+        .returns<CourseApp[]>();
 
       if (error) {
         console.error(error);
@@ -104,7 +105,7 @@ export default function DashboardPage() {
       console.log("courseApps data", data);
       console.log(JSON.stringify(data, null, 2));
 
-      setCourseApps((data ?? []) as unknown as CourseApp[]);
+      setCourseApps(data ?? []);
     };
 
     loadApps();
