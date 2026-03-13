@@ -82,7 +82,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     },
     {
       label: "利用アプリケーションの表示・編集",
-      href: "/admin/test/",
+      href: "/admin/dashboard/apps",
       roles: ["course_admin"],
     },
     {
