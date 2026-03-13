@@ -77,7 +77,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     { label: "メッセージの確認", href: "/admin/test", roles: ["course_admin"] },
     {
       label: "基本設定の表示・編集",
-      href: "/admin/test",
+      href: "/admin/dashboard/settings",
       roles: ["course_admin"],
     },
     {
