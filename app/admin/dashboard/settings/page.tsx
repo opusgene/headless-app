@@ -50,22 +50,30 @@ export default function CourseSettingsPage() {
   }, [router]);
 
   const handleSave = async () => {
-    if (!courseId) return;
+    console.log("保存ボタン押された");
 
-    const { error } = await supabase
+    if (!courseId) {
+      console.log("courseIdがない");
+      return;
+    }
+
+    const { data, error } = await supabase
       .from("golf_courses")
       .update({ name })
-      .eq("id", courseId);
+      .eq("id", courseId)
+      .select();
+
+    console.log("update data:", data);
+    console.log("update error:", error);
 
     if (error) {
-      console.error("UPDATE ERROR", error);
       alert("保存失敗");
       return;
     }
 
     alert("保存成功");
   };
-
+  
   if (loading) return <div>読み込み中...</div>;
 
   return (
