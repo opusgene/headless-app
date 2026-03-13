@@ -59,7 +59,7 @@ export default function AppsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">利用可能アプリ</h1>
+      <h1 className="text-2xl font-bold mb-4">利用可能アプリ一覧</h1>
 
       {apps.length === 0 ? (
         <p>利用できるアプリがありません。</p>
