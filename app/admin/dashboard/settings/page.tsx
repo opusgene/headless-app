@@ -58,12 +58,12 @@ export default function CourseSettingsPage() {
       .eq("id", courseId);
 
     if (error) {
+      console.error("UPDATE ERROR", error);
       alert("保存失敗");
-      console.error(error);
       return;
     }
 
-    alert("保存しました");
+    alert("保存成功");
   };
 
   if (loading) return <div>読み込み中...</div>;
