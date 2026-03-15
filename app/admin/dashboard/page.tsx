@@ -26,9 +26,14 @@ type CourseApp = {
 
 export default function DashboardPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [activeProfile, setActiveProfile] = useState<Profile | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [viewCourseId, setViewCourseId] = useState<string | null>(null);
+  const [impersonatedUserId, setImpersonatedUserId] = useState<string | null>(
+    null
+  );
   const [courseApps, setCourseApps] = useState<CourseApp[]>([]);
+
   const router = useRouter();
 
   // ---------- 初期ロード ----------
@@ -42,7 +47,6 @@ export default function DashboardPage() {
         return;
       }
 
-      // プロフィール取得
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("id, role, golf_course_id")
@@ -56,7 +60,6 @@ export default function DashboardPage() {
 
       setProfile(profileData);
 
-      // ゴルフ場一覧取得
       const { data: coursesData, error: coursesError } = await supabase
         .from("golf_courses")
         .select("id, name, golf_course_id")
@@ -73,10 +76,37 @@ export default function DashboardPage() {
     loadInitial();
   }, [router]);
 
+  // profileが読み込まれたら activeUserId を決定
+  const activeUserId = impersonatedUserId ?? profile?.id;
+
+  // ---------- activeProfile取得 ----------
+  useEffect(() => {
+    const loadActiveProfile = async () => {
+      if (!activeUserId) return;
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, role, golf_course_id")
+        .eq("id", activeUserId)
+        .single();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setActiveProfile(data);
+    };
+
+    loadActiveProfile();
+  }, [activeUserId]);
+
   // ---------- 選択ゴルフ場のアプリ取得 ----------
   useEffect(() => {
     const courseId =
-      profile?.role === "super_admin" ? viewCourseId : profile?.golf_course_id;
+      activeProfile?.role === "super_admin"
+        ? viewCourseId
+        : activeProfile?.golf_course_id;
 
     if (!courseId) return;
 
@@ -100,16 +130,13 @@ export default function DashboardPage() {
         return;
       }
 
-      console.log("courseApps data", data);
-      console.log(JSON.stringify(data, null, 2));
-
       setCourseApps(data ?? []);
     };
 
     loadApps();
-  }, [viewCourseId, profile]);
+  }, [viewCourseId, activeProfile]);
 
-  if (!profile) return <div>読み込み中...</div>;
+  if (!profile || !activeProfile) return <div>読み込み中...</div>;
 
   // ---------- ゴルフ場データ表示 ----------
   const renderCourseData = (courseId: string) => {
@@ -131,7 +158,7 @@ export default function DashboardPage() {
             <ul className="list-disc ml-5">
               {courseApps.map((rel) => (
                 <li key={rel.application_id}>
-                  {rel.applications?.name ?? "不明"}{" "}
+                  {rel.applications?.name ?? "不明"}
                 </li>
               ))}
             </ul>
@@ -146,7 +173,7 @@ export default function DashboardPage() {
     <>
       <h1 className="text-2xl font-bold">ダッシュボード</h1>
 
-      {profile.role === "super_admin" ? (
+      {activeProfile.role === "super_admin" ? (
         <div className="mt-6">
           <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
 
@@ -159,7 +186,6 @@ export default function DashboardPage() {
 
             {courses.map((course) => (
               <option key={course.id} value={course.id}>
-                {" "}
                 {course.name}
               </option>
             ))}
@@ -177,7 +203,7 @@ export default function DashboardPage() {
       ) : (
         <div className="mt-6">
           <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-          {renderCourseData(profile.golf_course_id)}
+          {renderCourseData(activeProfile.golf_course_id)}
         </div>
       )}
     </>
