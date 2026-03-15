@@ -26,15 +26,18 @@ type CourseApp = {
 
 export default function DashboardPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [activeProfile, setActiveProfile] = useState<Profile | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [viewCourseId, setViewCourseId] = useState<string | null>(null);
   const [impersonatedUserId, setImpersonatedUserId] = useState<string | null>(
     null
   );
   const [courseApps, setCourseApps] = useState<CourseApp[]>([]);
+  const [activeProfile, setActiveProfile] = useState<Profile | null>(null);
+  const [courseAdmins, setCourseAdmins] = useState<Profile[]>([]);
 
   const router = useRouter();
+
+  const activeUserId = impersonatedUserId ?? profile?.id ?? null;
 
   // ---------- 初期ロード ----------
   useEffect(() => {
@@ -71,13 +74,22 @@ export default function DashboardPage() {
       }
 
       setCourses(coursesData ?? []);
+
+      // course_admin一覧
+      const { data: admins, error: adminError } = await supabase
+        .from("profiles")
+        .select("id, role, golf_course_id")
+        .eq("role", "course_admin");
+
+      if (adminError) {
+        console.error(adminError);
+      } else {
+        setCourseAdmins(admins ?? []);
+      }
     };
 
     loadInitial();
   }, [router]);
-
-  // profileが読み込まれたら activeUserId を決定
-  const activeUserId = impersonatedUserId ?? profile?.id;
 
   // ---------- activeProfile取得 ----------
   useEffect(() => {
@@ -101,7 +113,7 @@ export default function DashboardPage() {
     loadActiveProfile();
   }, [activeUserId]);
 
-  // ---------- 選択ゴルフ場のアプリ取得 ----------
+  // ---------- アプリ取得 ----------
   useEffect(() => {
     const courseId =
       activeProfile?.role === "super_admin"
@@ -136,7 +148,7 @@ export default function DashboardPage() {
     loadApps();
   }, [viewCourseId, activeProfile]);
 
-  if (!profile || !activeProfile) return <div>読み込み中...</div>;
+  if (!activeProfile) return <div>読み込み中...</div>;
 
   // ---------- ゴルフ場データ表示 ----------
   const renderCourseData = (courseId: string) => {
@@ -198,6 +210,35 @@ export default function DashboardPage() {
               </h2>
               {renderCourseData(viewCourseId)}
             </div>
+          )}
+
+          <h2 className="text-xl mt-10 mb-4">ユーザーとして操作</h2>
+
+          <div className="space-y-2">
+            {courseAdmins.map((admin) => (
+              <div
+                key={admin.id}
+                className="flex items-center gap-4 border p-2 rounded"
+              >
+                <span>course_admin : {admin.golf_course_id}</span>
+
+                <button
+                  className="px-3 py-1 bg-blue-500 text-white rounded"
+                  onClick={() => setImpersonatedUserId(admin.id)}
+                >
+                  このユーザーとして操作
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {impersonatedUserId && (
+            <button
+              className="mt-4 px-3 py-1 bg-gray-500 text-white rounded"
+              onClick={() => setImpersonatedUserId(null)}
+            >
+              super_adminに戻る
+            </button>
           )}
         </div>
       ) : (
