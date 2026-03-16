@@ -13,7 +13,6 @@ type Profile = {
 type Course = {
   id: string;
   name: string;
-  golf_course_id: string;
 };
 
 type CourseApp = {
@@ -29,7 +28,18 @@ export default function DashboardPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [viewCourseId, setViewCourseId] = useState<string | null>(null);
   const [courseApps, setCourseApps] = useState<CourseApp[]>([]);
+  const [impersonateCourseId, setImpersonateCourseId] = useState<string | null>(
+    null
+  );
+
   const router = useRouter();
+
+  // ---------- 現在の閲覧ゴルフ場 ----------
+  const currentCourseId =
+    impersonateCourseId ??
+    (profile?.role === "super_admin"
+      ? viewCourseId
+      : profile?.golf_course_id);
 
   // ---------- 初期ロード ----------
   useEffect(() => {
@@ -59,7 +69,7 @@ export default function DashboardPage() {
       // ゴルフ場一覧取得
       const { data: coursesData, error: coursesError } = await supabase
         .from("golf_courses")
-        .select("id, name, golf_course_id")
+        .select("id, name")
         .order("name");
 
       if (coursesError) {
@@ -73,12 +83,9 @@ export default function DashboardPage() {
     loadInitial();
   }, [router]);
 
-  // ---------- 選択ゴルフ場のアプリ取得 ----------
+  // ---------- ゴルフ場のアプリ取得 ----------
   useEffect(() => {
-    const courseId =
-      profile?.role === "super_admin" ? viewCourseId : profile?.golf_course_id;
-
-    if (!courseId) return;
+    if (!currentCourseId) return;
 
     const loadApps = async () => {
       const { data, error } = await supabase
@@ -92,7 +99,7 @@ export default function DashboardPage() {
           )
         `
         )
-        .eq("golf_course_id", courseId)
+        .eq("golf_course_id", currentCourseId)
         .returns<CourseApp[]>();
 
       if (error) {
@@ -100,14 +107,11 @@ export default function DashboardPage() {
         return;
       }
 
-      console.log("courseApps data", data);
-      console.log(JSON.stringify(data, null, 2));
-
       setCourseApps(data ?? []);
     };
 
     loadApps();
-  }, [viewCourseId, profile]);
+  }, [viewCourseId, profile, impersonateCourseId]);
 
   if (!profile) return <div>読み込み中...</div>;
 
@@ -131,7 +135,7 @@ export default function DashboardPage() {
             <ul className="list-disc ml-5">
               {courseApps.map((rel) => (
                 <li key={rel.application_id}>
-                  {rel.applications?.name ?? "不明"}{" "}
+                  {rel.applications?.name ?? "不明"}
                 </li>
               ))}
             </ul>
@@ -146,6 +150,22 @@ export default function DashboardPage() {
     <>
       <h1 className="text-2xl font-bold">ダッシュボード</h1>
 
+      {/* impersonate表示 */}
+      {impersonateCourseId && (
+        <div className="bg-yellow-100 border p-3 mt-4 rounded">
+          <p className="text-sm">
+            現在このゴルフ場の管理者として閲覧しています
+          </p>
+
+          <button
+            className="mt-2 px-3 py-1 bg-gray-600 text-white rounded"
+            onClick={() => setImpersonateCourseId(null)}
+          >
+            管理者モードに戻る
+          </button>
+        </div>
+      )}
+
       {profile.role === "super_admin" ? (
         <div className="mt-6">
           <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
@@ -159,25 +179,38 @@ export default function DashboardPage() {
 
             {courses.map((course) => (
               <option key={course.id} value={course.id}>
-                {" "}
                 {course.name}
               </option>
             ))}
           </select>
 
-          {viewCourseId && (
+          {/* impersonateボタン */}
+          <div className="mt-3">
+            <button
+              disabled={!viewCourseId}
+              className="px-3 py-1 bg-blue-600 text-white rounded disabled:bg-gray-400"
+              onClick={() => {
+                if (viewCourseId) {
+                  setImpersonateCourseId(viewCourseId);
+                }
+              }}
+            >
+              このゴルフ場としてログイン
+            </button>
+          </div>
+
+          {/* ゴルフ場データ */}
+          {currentCourseId && (
             <div className="mt-6">
-              <h2 className="text-lg font-semibold">
-                選択されたゴルフ場のデータ
-              </h2>
-              {renderCourseData(viewCourseId)}
+              <h2 className="text-lg font-semibold">ゴルフ場データ</h2>
+              {renderCourseData(currentCourseId)}
             </div>
           )}
         </div>
       ) : (
         <div className="mt-6">
           <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-          {renderCourseData(profile.golf_course_id)}
+          {currentCourseId && renderCourseData(currentCourseId)}
         </div>
       )}
     </>
