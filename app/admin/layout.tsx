@@ -12,6 +12,8 @@ type Profile = {
   role: string;
 };
 
+const [activeProfile, setActiveProfile] = useState<Profile | null>(null);
+
 type MenuItem = {
   label: string;
   href: string;
@@ -29,22 +31,26 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const load = async () => {
       const { data } = await supabase.auth.getUser();
       const user = data.user;
-
+  
       if (!user) {
         router.replace("/login");
         return;
       }
-
+  
+      const impersonatedUserId = localStorage.getItem("impersonatedUserId");
+      const targetUserId = impersonatedUserId ?? user.id;
+  
       const { data: profileData } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user.id)
+        .eq("id", targetUserId)
         .single();
-
+  
       setProfile(profileData);
+      setActiveProfile(profileData);
       setLoading(false);
     };
-
+  
     load();
   }, [router]);
 
@@ -94,7 +100,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   // 👇 roleでフィルタ
   const visibleMenu = menu.filter(
-    (item) => profile && item.roles.includes(profile.role)
+    (item) => activeProfile && item.roles.includes(activeProfile.role)
   );
 
   return (
@@ -104,7 +110,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <span className="font-bold">Golf Admin</span>
 
         <span className="ml-auto text-sm text-gray-600">
-          {loading ? "読み込み中..." : `${profile?.name} (${profile?.role})`}
+          {loading ? "読み込み中..." : `${activeProfile?.name} (${activeProfile?.role})`}
         </span>
       </header>
 
