@@ -28,11 +28,7 @@ export default function DashboardPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [viewCourseId, setViewCourseId] = useState<string | null>(null);
-  const [impersonatedUserId, setImpersonatedUserId] = useState<string | null>(
-    null
-  );
   const [courseApps, setCourseApps] = useState<CourseApp[]>([]);
-  const [activeProfile, setActiveProfile] = useState<Profile | null>(null);
   const router = useRouter();
 
   // ---------- 初期ロード ----------
@@ -113,31 +109,7 @@ export default function DashboardPage() {
     loadApps();
   }, [viewCourseId, profile]);
 
-  // ---------- activeProfile取得 ----------
-  useEffect(() => {
-    const loadActiveProfile = async () => {
-      if (!activeUserId) return;
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, role, golf_course_id")
-        .eq("id", activeUserId)
-        .single();
-
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      setActiveProfile(data);
-    };
-
-    loadActiveProfile();
-  }, [activeUserId]);
-
-  if (!activeProfile) return <div>読み込み中...</div>;
-
-  const activeUserId = impersonatedUserId ?? profile.id;
+  if (!profile) return <div>読み込み中...</div>;
 
   // ---------- ゴルフ場データ表示 ----------
   const renderCourseData = (courseId: string) => {
@@ -174,7 +146,7 @@ export default function DashboardPage() {
     <>
       <h1 className="text-2xl font-bold">ダッシュボード</h1>
 
-      {activeProfile.role === "super_admin" ? (
+      {profile.role === "super_admin" ? (
         <div className="mt-6">
           <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
 
@@ -205,7 +177,7 @@ export default function DashboardPage() {
       ) : (
         <div className="mt-6">
           <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-          activeProfile.golf_course_id{" "}
+          {renderCourseData(profile.golf_course_id)}
         </div>
       )}
     </>
