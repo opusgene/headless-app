@@ -27,8 +27,12 @@ type CourseApp = {
 export default function DashboardPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
-  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+  const [viewCourseId, setViewCourseId] = useState<string | null>(null);
+  const [impersonatedUserId, setImpersonatedUserId] = useState<string | null>(
+    null
+  );
   const [courseApps, setCourseApps] = useState<CourseApp[]>([]);
+  const [activeProfile, setActiveProfile] = useState<Profile | null>(null);
   const router = useRouter();
 
   // ---------- 初期ロード ----------
@@ -76,9 +80,7 @@ export default function DashboardPage() {
   // ---------- 選択ゴルフ場のアプリ取得 ----------
   useEffect(() => {
     const courseId =
-      profile?.role === "super_admin"
-        ? selectedCourseId
-        : profile?.golf_course_id;
+      profile?.role === "super_admin" ? viewCourseId : profile?.golf_course_id;
 
     if (!courseId) return;
 
@@ -109,9 +111,33 @@ export default function DashboardPage() {
     };
 
     loadApps();
-  }, [selectedCourseId, profile]);
+  }, [viewCourseId, profile]);
 
-  if (!profile) return <div>読み込み中...</div>;
+  // ---------- activeProfile取得 ----------
+  useEffect(() => {
+    const loadActiveProfile = async () => {
+      if (!activeUserId) return;
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, role, golf_course_id")
+        .eq("id", activeUserId)
+        .single();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setActiveProfile(data);
+    };
+
+    loadActiveProfile();
+  }, [activeUserId]);
+
+  if (!activeProfile) return <div>読み込み中...</div>;
+
+  const activeUserId = impersonatedUserId ?? profile.id;
 
   // ---------- ゴルフ場データ表示 ----------
   const renderCourseData = (courseId: string) => {
@@ -148,14 +174,14 @@ export default function DashboardPage() {
     <>
       <h1 className="text-2xl font-bold">ダッシュボード</h1>
 
-      {profile.role === "super_admin" ? (
+      {activeProfile.role === "super_admin" ? (
         <div className="mt-6">
           <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
 
           <select
             className="border p-2 rounded"
-            value={selectedCourseId ?? ""}
-            onChange={(e) => setSelectedCourseId(e.target.value)}
+            value={viewCourseId ?? ""}
+            onChange={(e) => setViewCourseId(e.target.value)}
           >
             <option value="">選択してください</option>
 
@@ -167,19 +193,19 @@ export default function DashboardPage() {
             ))}
           </select>
 
-          {selectedCourseId && (
+          {viewCourseId && (
             <div className="mt-6">
               <h2 className="text-lg font-semibold">
                 選択されたゴルフ場のデータ
               </h2>
-              {renderCourseData(selectedCourseId)}
+              {renderCourseData(viewCourseId)}
             </div>
           )}
         </div>
       ) : (
         <div className="mt-6">
           <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-          {renderCourseData(profile.golf_course_id)}
+          activeProfile.golf_course_id{" "}
         </div>
       )}
     </>
