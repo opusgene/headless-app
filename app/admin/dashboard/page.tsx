@@ -27,17 +27,9 @@ type CourseApp = {
 export default function DashboardPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
-  const [viewCourseId, setViewCourseId] = useState<string | null>(null);
-  const [impersonatedUserId, setImpersonatedUserId] = useState<string | null>(
-    null
-  );
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const [courseApps, setCourseApps] = useState<CourseApp[]>([]);
-  const [activeProfile, setActiveProfile] = useState<Profile | null>(null);
-  const [courseAdmins, setCourseAdmins] = useState<Profile[]>([]);
-
   const router = useRouter();
-
-  const activeUserId = impersonatedUserId ?? profile?.id ?? null;
 
   // ---------- 初期ロード ----------
   useEffect(() => {
@@ -50,6 +42,7 @@ export default function DashboardPage() {
         return;
       }
 
+      // プロフィール取得
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("id, role, golf_course_id")
@@ -63,6 +56,7 @@ export default function DashboardPage() {
 
       setProfile(profileData);
 
+      // ゴルフ場一覧取得
       const { data: coursesData, error: coursesError } = await supabase
         .from("golf_courses")
         .select("id, name, golf_course_id")
@@ -74,51 +68,17 @@ export default function DashboardPage() {
       }
 
       setCourses(coursesData ?? []);
-
-      // course_admin一覧
-      const { data: admins, error: adminError } = await supabase
-        .from("profiles")
-        .select("id, role, golf_course_id")
-        .eq("role", "course_admin");
-
-      if (adminError) {
-        console.error(adminError);
-      } else {
-        setCourseAdmins(admins ?? []);
-      }
     };
 
     loadInitial();
   }, [router]);
 
-  // ---------- activeProfile取得 ----------
-  useEffect(() => {
-    const loadActiveProfile = async () => {
-      if (!activeUserId) return;
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, role, golf_course_id")
-        .eq("id", activeUserId)
-        .single();
-
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      setActiveProfile(data);
-    };
-
-    loadActiveProfile();
-  }, [activeUserId]);
-
-  // ---------- アプリ取得 ----------
+  // ---------- 選択ゴルフ場のアプリ取得 ----------
   useEffect(() => {
     const courseId =
-      activeProfile?.role === "super_admin"
-        ? viewCourseId
-        : activeProfile?.golf_course_id;
+      profile?.role === "super_admin"
+        ? selectedCourseId
+        : profile?.golf_course_id;
 
     if (!courseId) return;
 
@@ -142,13 +102,16 @@ export default function DashboardPage() {
         return;
       }
 
+      console.log("courseApps data", data);
+      console.log(JSON.stringify(data, null, 2));
+
       setCourseApps(data ?? []);
     };
 
     loadApps();
-  }, [viewCourseId, activeProfile]);
+  }, [selectedCourseId, profile]);
 
-  if (!activeProfile) return <div>読み込み中...</div>;
+  if (!profile) return <div>読み込み中...</div>;
 
   // ---------- ゴルフ場データ表示 ----------
   const renderCourseData = (courseId: string) => {
@@ -170,7 +133,7 @@ export default function DashboardPage() {
             <ul className="list-disc ml-5">
               {courseApps.map((rel) => (
                 <li key={rel.application_id}>
-                  {rel.applications?.name ?? "不明"}
+                  {rel.applications?.name ?? "不明"}{" "}
                 </li>
               ))}
             </ul>
@@ -185,72 +148,38 @@ export default function DashboardPage() {
     <>
       <h1 className="text-2xl font-bold">ダッシュボード</h1>
 
-      {activeProfile.role === "super_admin" ? (
+      {profile.role === "super_admin" ? (
         <div className="mt-6">
           <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
 
           <select
             className="border p-2 rounded"
-            value={viewCourseId ?? ""}
-            onChange={(e) => setViewCourseId(e.target.value)}
+            value={selectedCourseId ?? ""}
+            onChange={(e) => setSelectedCourseId(e.target.value)}
           >
             <option value="">選択してください</option>
 
             {courses.map((course) => (
               <option key={course.id} value={course.id}>
+                {" "}
                 {course.name}
               </option>
             ))}
           </select>
 
-          {viewCourseId && (
+          {selectedCourseId && (
             <div className="mt-6">
               <h2 className="text-lg font-semibold">
                 選択されたゴルフ場のデータ
               </h2>
-              {renderCourseData(viewCourseId)}
+              {renderCourseData(selectedCourseId)}
             </div>
-          )}
-
-          <h2 className="text-xl mt-10 mb-4">ユーザーとして操作</h2>
-
-          <div className="space-y-2">
-            {courseAdmins.map((admin) => (
-              <div
-                key={admin.id}
-                className="flex items-center gap-4 border p-2 rounded"
-              >
-                <span>course_admin : {admin.golf_course_id}</span>
-
-                <button
-                  className="px-3 py-1 bg-blue-500 text-white rounded"
-                  onClick={() => {
-                    setImpersonatedUserId(admin.id);
-                    localStorage.setItem("impersonatedUserId", admin.id);
-                  }}
-                >
-                  このユーザーとして操作
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {impersonatedUserId && (
-            <button
-              className="mt-4 px-3 py-1 bg-gray-500 text-white rounded"
-              onClick={() => {
-                setImpersonatedUserId(null);
-                localStorage.removeItem("impersonatedUserId");
-              }}
-            >
-              super_adminに戻る
-            </button>
           )}
         </div>
       ) : (
         <div className="mt-6">
           <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
-          {renderCourseData(activeProfile.golf_course_id)}
+          {renderCourseData(profile.golf_course_id)}
         </div>
       )}
     </>

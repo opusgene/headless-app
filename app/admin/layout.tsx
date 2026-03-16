@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
@@ -9,8 +11,6 @@ type Profile = {
   name: string;
   role: string;
 };
-
-const [activeProfile, setActiveProfile] = useState<Profile | null>(null);
 
 type MenuItem = {
   label: string;
@@ -29,26 +29,22 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const load = async () => {
       const { data } = await supabase.auth.getUser();
       const user = data.user;
-  
+
       if (!user) {
         router.replace("/login");
         return;
       }
-  
-      const impersonatedUserId = localStorage.getItem("impersonatedUserId");
-      const targetUserId = impersonatedUserId ?? user.id;
-  
+
       const { data: profileData } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", targetUserId)
+        .eq("id", user.id)
         .single();
-  
+
       setProfile(profileData);
-      setActiveProfile(profileData);
       setLoading(false);
     };
-  
+
     load();
   }, [router]);
 
@@ -98,7 +94,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   // 👇 roleでフィルタ
   const visibleMenu = menu.filter(
-    (item) => activeProfile && item.roles.includes(activeProfile.role)
+    (item) => profile && item.roles.includes(profile.role)
   );
 
   return (
@@ -108,7 +104,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <span className="font-bold">Golf Admin</span>
 
         <span className="ml-auto text-sm text-gray-600">
-          {loading ? "読み込み中..." : `${activeProfile?.name} (${activeProfile?.role})`}
+          {loading ? "読み込み中..." : `${profile?.name} (${profile?.role})`}
         </span>
       </header>
 
