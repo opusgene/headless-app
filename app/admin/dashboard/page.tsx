@@ -37,9 +37,9 @@ export default function DashboardPage() {
   // ---------- 現在の閲覧ゴルフ場 ----------
   const currentCourseId =
     impersonateCourseId ??
-    (profile?.role === "super_admin"
-      ? viewCourseId
-      : profile?.golf_course_id);
+    (profile?.role === "super_admin" ? viewCourseId : profile?.golf_course_id);
+
+  const effectiveRole = impersonateCourseId ? "course_admin" : profile?.role;
 
   // ---------- 初期ロード ----------
   useEffect(() => {
@@ -146,6 +146,9 @@ export default function DashboardPage() {
   };
 
   // ---------- UI ----------
+  {
+    /* ---------- UI ---------- */
+  }
   return (
     <>
       <h1 className="text-2xl font-bold">ダッシュボード</h1>
@@ -166,7 +169,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {profile.role === "super_admin" ? (
+      {effectiveRole === "super_admin" ? (
         <div className="mt-6">
           <h2 className="text-xl mb-4">ゴルフ場を選択</h2>
 
@@ -184,7 +187,6 @@ export default function DashboardPage() {
             ))}
           </select>
 
-          {/* impersonateボタン */}
           <div className="mt-3">
             <button
               disabled={!viewCourseId}
@@ -199,7 +201,6 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          {/* ゴルフ場データ */}
           {currentCourseId && (
             <div className="mt-6">
               <h2 className="text-lg font-semibold">ゴルフ場データ</h2>
@@ -209,7 +210,7 @@ export default function DashboardPage() {
         </div>
       ) : (
         <div className="mt-6">
-          <h2 className="text-xl">あなたのゴルフ場のデータ</h2>
+          <h2 className="text-xl">ゴルフ場のデータ</h2>
           {currentCourseId && renderCourseData(currentCourseId)}
         </div>
       )}
