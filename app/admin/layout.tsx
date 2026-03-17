@@ -8,7 +8,6 @@ import {
   ImpersonateProvider,
   useImpersonate,
 } from "@/context/impersonateContext";
-import { Suspense } from "react";
 import "../globals.css";
 
 type Profile = {
@@ -36,7 +35,8 @@ function LayoutContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   // impersonate中なら強制的にcourse_admin扱い
-  const effectiveRole = impersonateCourseId ? "course_admin" : profile?.role;
+  const effectiveRole =
+    impersonateCourseId ? "course_admin" : profile?.role;
 
   // ------------------------------
   // 初期ロード
@@ -169,12 +169,14 @@ function LayoutContent({ children }: { children: ReactNode }) {
 // ------------------------------
 // Providerで包む（最上位）
 // ------------------------------
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <ImpersonateProvider>
-      <Suspense fallback={<div>Loading...</div>}>
-        <LayoutContent>{children}</LayoutContent>
-      </Suspense>
+      <LayoutContent>{children}</LayoutContent>
     </ImpersonateProvider>
   );
 }
