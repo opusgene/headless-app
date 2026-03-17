@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import { useImpersonate } from "@/context/impersonateContext";
 
 type Profile = {
   id: string;
@@ -28,18 +29,21 @@ export default function DashboardPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [viewCourseId, setViewCourseId] = useState<string | null>(null);
   const [courseApps, setCourseApps] = useState<CourseApp[]>([]);
-  const [impersonateCourseId, setImpersonateCourseId] = useState<string | null>(
-    null
-  );
+
+  // ✅ Contextから取得（ここが一番重要）
+  const { impersonateCourseId, setImpersonateCourseId } = useImpersonate();
 
   const router = useRouter();
 
   // ---------- 現在の閲覧ゴルフ場 ----------
   const currentCourseId =
     impersonateCourseId ??
-    (profile?.role === "super_admin" ? viewCourseId : profile?.golf_course_id);
+    (profile?.role === "super_admin"
+      ? viewCourseId
+      : profile?.golf_course_id);
 
-  const effectiveRole = impersonateCourseId ? "course_admin" : profile?.role;
+  const effectiveRole =
+    impersonateCourseId ? "course_admin" : profile?.role;
 
   // ---------- 初期ロード ----------
   useEffect(() => {
@@ -52,7 +56,6 @@ export default function DashboardPage() {
         return;
       }
 
-      // プロフィール取得
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("id, role, golf_course_id")
@@ -66,7 +69,6 @@ export default function DashboardPage() {
 
       setProfile(profileData);
 
-      // ゴルフ場一覧取得
       const { data: coursesData, error: coursesError } = await supabase
         .from("golf_courses")
         .select("id, name")
@@ -111,7 +113,7 @@ export default function DashboardPage() {
     };
 
     loadApps();
-  }, [viewCourseId, profile, impersonateCourseId]);
+  }, [currentCourseId]); // ← シンプルにこれでOK
 
   if (!profile) return <div>読み込み中...</div>;
 
@@ -146,9 +148,6 @@ export default function DashboardPage() {
   };
 
   // ---------- UI ----------
-  {
-    /* ---------- UI ---------- */
-  }
   return (
     <>
       <h1 className="text-2xl font-bold">ダッシュボード</h1>
