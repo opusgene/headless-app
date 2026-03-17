@@ -1,5 +1,3 @@
-"use client";
-
 import { ReactNode, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
@@ -8,6 +6,7 @@ import {
   ImpersonateProvider,
   useImpersonate,
 } from "@/context/impersonateContext";
+import { Suspense } from "react";
 import "../globals.css";
 
 type Profile = {
@@ -169,14 +168,16 @@ function LayoutContent({ children }: { children: ReactNode }) {
 // ------------------------------
 // Providerで包む（最上位）
 // ------------------------------
-export default function AdminLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  return (
-    <ImpersonateProvider>
-      <LayoutContent>{children}</LayoutContent>
-    </ImpersonateProvider>
-  );
-}
+  export default function AdminLayout({
+    children,
+  }: {
+    children: React.ReactNode;
+  }) {
+    return (
+      <ImpersonateProvider>
+        <Suspense fallback={<div>Loading...</div>}>
+          <LayoutContent>{children}</LayoutContent>
+        </Suspense>
+      </ImpersonateProvider>
+    );
+  }
