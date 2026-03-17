@@ -21,6 +21,10 @@ type MenuItem = {
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [impersonateCourseId, setImpersonateCourseId] = useState<string | null>(
+    null
+  );
+  const effectiveRole = impersonateCourseId ? "course_admin" : profile?.role;
 
   const router = useRouter();
   const pathname = usePathname();
@@ -94,7 +98,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   // 👇 roleでフィルタ
   const visibleMenu = menu.filter(
-    (item) => profile && item.roles.includes(profile.role)
+    (item) => effectiveRole && item.roles.includes(effectiveRole)
   );
 
   return (
@@ -104,7 +108,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <span className="font-bold">Golf Admin</span>
 
         <span className="ml-auto text-sm text-gray-600">
-          {loading ? "読み込み中..." : `${profile?.name} (${profile?.role})`}
+          {loading ? "読み込み中..." : `${profile?.name} (${effectiveRole})`}
         </span>
       </header>
 
