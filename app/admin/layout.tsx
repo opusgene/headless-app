@@ -4,7 +4,11 @@ import { ReactNode, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
-import "../globals.css"; // TailwindのグローバルCSS読み込み
+import {
+  ImpersonateProvider,
+  useImpersonate,
+} from "@/context/impersonateContext";
+import "../globals.css";
 
 type Profile = {
   id: string;
@@ -18,17 +22,25 @@ type MenuItem = {
   roles: string[];
 };
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+// ------------------------------
+// Layout本体（Contextの中で使う）
+// ------------------------------
+function LayoutContent({ children }: { children: ReactNode }) {
+  const { impersonateCourseId } = useImpersonate();
+
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [impersonateCourseId, setImpersonateCourseId] = useState<string | null>(
-    null
-  );
-  const effectiveRole = impersonateCourseId ? "course_admin" : profile?.role;
 
   const router = useRouter();
   const pathname = usePathname();
 
+  // impersonate中なら強制的にcourse_admin扱い
+  const effectiveRole =
+    impersonateCourseId ? "course_admin" : profile?.role;
+
+  // ------------------------------
+  // 初期ロード
+  // ------------------------------
   useEffect(() => {
     const load = async () => {
       const { data } = await supabase.auth.getUser();
@@ -52,6 +64,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     load();
   }, [router]);
 
+  // ------------------------------
+  // メニュー定義
+  // ------------------------------
   const menu: MenuItem[] = [
     {
       label: "ダッシュボード",
@@ -78,7 +93,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       href: "/admin/test",
       roles: ["super_admin"],
     },
-    { label: "メッセージの確認", href: "/admin/test", roles: ["course_admin"] },
+    {
+      label: "メッセージの確認",
+      href: "/admin/test",
+      roles: ["course_admin"],
+    },
     {
       label: "基本設定の表示・編集",
       href: "/admin/dashboard/settings",
@@ -96,11 +115,16 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     },
   ];
 
-  // 👇 roleでフィルタ
+  // ------------------------------
+  // 表示メニュー
+  // ------------------------------
   const visibleMenu = menu.filter(
     (item) => effectiveRole && item.roles.includes(effectiveRole)
   );
 
+  // ------------------------------
+  // UI
+  // ------------------------------
   return (
     <div className="flex flex-col h-screen">
       {/* ヘッダー */}
@@ -144,5 +168,20 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </main>
       </div>
     </div>
+  );
+}
+
+// ------------------------------
+// Providerで包む（最上位）
+// ------------------------------
+export default function AdminLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <ImpersonateProvider>
+      <LayoutContent>{children}</LayoutContent>
+    </ImpersonateProvider>
   );
 }
