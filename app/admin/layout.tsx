@@ -36,8 +36,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   // impersonate中なら強制的にcourse_admin扱い
-  const effectiveRole =
-    impersonateCourseId ? "course_admin" : profile?.role;
+  const effectiveRole = impersonateCourseId ? "course_admin" : profile?.role;
 
   // ------------------------------
   // 初期ロード
@@ -170,16 +169,12 @@ function LayoutContent({ children }: { children: ReactNode }) {
 // ------------------------------
 // Providerで包む（最上位）
 // ------------------------------
-  export default function AdminLayout({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) {
-    return (
-      <ImpersonateProvider>
-        <Suspense fallback={<div>Loading...</div>}>
-          <LayoutContent>{children}</LayoutContent>
-        </Suspense>
-      </ImpersonateProvider>
-    );
-  }
+export default function AdminLayout({ children }: { children: ReactNode }) {
+  return (
+    <ImpersonateProvider>
+      <Suspense fallback={<div>Loading...</div>}>
+        <LayoutContent>{children}</LayoutContent>
+      </Suspense>
+    </ImpersonateProvider>
+  );
+}
