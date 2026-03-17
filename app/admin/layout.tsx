@@ -84,11 +84,6 @@ function LayoutContent({ children }: { children: ReactNode }) {
       roles: ["super_admin"],
     },
     {
-      label: "ゴルフ場の担当者としてログイン",
-      href: "/admin/test",
-      roles: ["super_admin"],
-    },
-    {
       label: "ゴルフ場へメッセージ送信",
       href: "/admin/test",
       roles: ["super_admin"],
