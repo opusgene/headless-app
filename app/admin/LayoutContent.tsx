@@ -155,7 +155,7 @@ export default function LayoutContent({
       {impersonateCourseId && (
         <div className="bg-yellow-100 border-b border-yellow-300 px-6 py-2 flex items-center text-sm">
           <span>
-            現在{courseName ?? "読み込み中..."}の管理者として閲覧しています
+            現在、{courseName ?? "読み込み中..."}の管理者として閲覧しています
           </span>
 
           <button

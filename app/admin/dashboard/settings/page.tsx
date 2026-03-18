@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import { useImpersonate } from "@/context/impersonateContext";
 
 export default function CourseSettingsPage() {
+  const { impersonateCourseId } = useImpersonate();
+
   const [courseId, setCourseId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
@@ -24,19 +27,28 @@ export default function CourseSettingsPage() {
       // プロフィール取得
       const { data: profile } = await supabase
         .from("profiles")
-        .select("golf_course_id")
+        .select("golf_course_id, role")
         .eq("id", user.id)
         .single();
 
       if (!profile) return;
 
-      setCourseId(profile.golf_course_id);
+      // 🔥 ここが本質
+      const effectiveCourseId =
+        impersonateCourseId ?? profile.golf_course_id;
+
+      if (!effectiveCourseId) {
+        alert("ゴルフ場が見つかりません");
+        return;
+      }
+
+      setCourseId(effectiveCourseId);
 
       // ゴルフ場情報取得
       const { data: course } = await supabase
         .from("golf_courses")
         .select("name")
-        .eq("id", profile.golf_course_id)
+        .eq("id", effectiveCourseId)
         .single();
 
       if (course) {
@@ -47,24 +59,15 @@ export default function CourseSettingsPage() {
     };
 
     loadCourse();
-  }, [router]);
+  }, [router, impersonateCourseId]);
 
   const handleSave = async () => {
-    console.log("保存ボタン押された");
+    if (!courseId) return;
 
-    if (!courseId) {
-      console.log("courseIdがない");
-      return;
-    }
-
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("golf_courses")
       .update({ name })
-      .eq("id", courseId)
-      .select();
-
-    console.log("update data:", data);
-    console.log("update error:", error);
+      .eq("id", courseId);
 
     if (error) {
       alert("保存失敗");
@@ -73,7 +76,7 @@ export default function CourseSettingsPage() {
 
     alert("保存成功");
   };
-  
+
   if (loading) return <div>読み込み中...</div>;
 
   return (
