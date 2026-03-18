@@ -39,7 +39,7 @@ export default function CourseSettingsPage() {
       // ✅ ここ追加
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
-          router.replace("/admin");
+          router.replace("/admin/dashboard");
           return;
         }
 
