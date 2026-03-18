@@ -34,10 +34,15 @@ export default function CourseSettingsPage() {
       if (!profile) return;
 
       // 🔥 ここが本質
-      const effectiveCourseId =
-        impersonateCourseId ?? profile.golf_course_id;
+      const effectiveCourseId = impersonateCourseId ?? profile.golf_course_id;
 
+      // ✅ ここ追加
       if (!effectiveCourseId) {
+        if (profile.role === "super_admin") {
+          router.replace("/admin");
+          return;
+        }
+
         alert("ゴルフ場が見つかりません");
         return;
       }
