@@ -23,7 +23,7 @@ export default function LayoutContent({
 }: {
   children: ReactNode;
 }) {
-  const { impersonateCourseId } = useImpersonate();
+  const { impersonateCourseId, setImpersonateCourseId } = useImpersonate();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -127,6 +127,22 @@ export default function LayoutContent({
           {loading ? "読み込み中..." : `${profile?.name} (${effectiveRole})`}
         </span>
       </header>
+
+      {/* impersonateバナー */}
+      {impersonateCourseId && (
+        <div className="bg-yellow-100 border-b border-yellow-300 px-6 py-2 flex items-center text-sm">
+          <span>
+            現在このゴルフ場の管理者として閲覧しています
+          </span>
+
+          <button
+            onClick={() => setImpersonateCourseId(null)}
+            className="ml-4 text-blue-600 underline"
+          >
+            管理者モードに戻る
+          </button>
+        </div>
+      )}
 
       {/* ボディ */}
       <div className="flex flex-1">
