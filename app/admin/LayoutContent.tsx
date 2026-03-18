@@ -18,20 +18,26 @@ type MenuItem = {
   roles: string[];
 };
 
-export default function LayoutContent({ children }: { children: ReactNode }) {
+export default function LayoutContent({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const { impersonateCourseId, setImpersonateCourseId } = useImpersonate();
 
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [courseName, setCourseName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
   const pathname = usePathname();
 
   // impersonate中なら強制的にcourse_admin扱い
-  const effectiveRole = impersonateCourseId ? "course_admin" : profile?.role;
+  const effectiveRole =
+    impersonateCourseId ? "course_admin" : profile?.role;
 
   // ------------------------------
-  // 初期ロード
+  // ユーザープロフィール取得
   // ------------------------------
   useEffect(() => {
     const load = async () => {
@@ -55,6 +61,28 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
 
     load();
   }, [router]);
+
+  // ------------------------------
+  // ゴルフ場名取得（impersonate用）
+  // ------------------------------
+  useEffect(() => {
+    const loadCourse = async () => {
+      if (!impersonateCourseId) {
+        setCourseName(null);
+        return;
+      }
+
+      const { data } = await supabase
+        .from("golf_courses")
+        .select("name")
+        .eq("id", impersonateCourseId)
+        .single();
+
+      setCourseName(data?.name ?? null);
+    };
+
+    loadCourse();
+  }, [impersonateCourseId]);
 
   // ------------------------------
   // メニュー定義
@@ -126,12 +154,14 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
       {/* impersonateバナー */}
       {impersonateCourseId && (
         <div className="bg-yellow-100 border-b border-yellow-300 px-6 py-2 flex items-center text-sm">
-          <span>現在このゴルフ場の管理者として閲覧しています</span>
+          <span>
+            現在{courseName ?? "読み込み中..."}の管理者として閲覧しています
+          </span>
 
           <button
             onClick={() => {
               setImpersonateCourseId(null);
-              router.push("/admin/dashboard");
+              router.replace("/admin/dashboard");
             }}
             className="ml-4 text-blue-600 underline"
           >
