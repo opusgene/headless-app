@@ -18,11 +18,7 @@ type MenuItem = {
   roles: string[];
 };
 
-export default function LayoutContent({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function LayoutContent({ children }: { children: ReactNode }) {
   const { impersonateCourseId, setImpersonateCourseId } = useImpersonate();
 
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -32,8 +28,7 @@ export default function LayoutContent({
   const pathname = usePathname();
 
   // impersonate中なら強制的にcourse_admin扱い
-  const effectiveRole =
-    impersonateCourseId ? "course_admin" : profile?.role;
+  const effectiveRole = impersonateCourseId ? "course_admin" : profile?.role;
 
   // ------------------------------
   // 初期ロード
@@ -131,12 +126,13 @@ export default function LayoutContent({
       {/* impersonateバナー */}
       {impersonateCourseId && (
         <div className="bg-yellow-100 border-b border-yellow-300 px-6 py-2 flex items-center text-sm">
-          <span>
-            現在このゴルフ場の管理者として閲覧しています
-          </span>
+          <span>現在このゴルフ場の管理者として閲覧しています</span>
 
           <button
-            onClick={() => setImpersonateCourseId(null)}
+            onClick={() => {
+              setImpersonateCourseId(null);
+              router.push("/admin/dashboard");
+            }}
             className="ml-4 text-blue-600 underline"
           >
             管理者モードに戻る
