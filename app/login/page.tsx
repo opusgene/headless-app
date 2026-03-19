@@ -1,25 +1,39 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import { useImpersonate } from "@/context/impersonateContext";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { setImpersonateCourseId } = useImpersonate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  // 🔥 ここ追加
+  useEffect(() => {
+    setImpersonateCourseId(null);
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
     if (error) setError(error.message);
-    else router.push("admin/dashboard");
+    else router.push("/admin/dashboard");
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <form onSubmit={handleLogin} className="flex flex-col gap-4 w-80">
         <h1 className="text-2xl font-bold text-center">ログイン</h1>
+
         <input
           type="email"
           placeholder="メールアドレス"
@@ -27,6 +41,7 @@ export default function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
           className="border p-2 rounded"
         />
+
         <input
           type="password"
           placeholder="パスワード"
@@ -34,7 +49,9 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           className="border p-2 rounded"
         />
+
         {error && <p className="text-red-500 text-sm">{error}</p>}
+
         <button className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
           ログイン
         </button>
