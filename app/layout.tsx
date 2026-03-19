@@ -1,11 +1,12 @@
 // app/layout.tsx
 
 import { Providers } from "./providers";
+import { ImpersonateProvider } from "@/context/impersonateContext";
+import type { ReactNode } from "react";
 
 export const metadata = {
   title: "Golf Admin",
 };
-import type { ReactNode } from "react";
 
 export default function RootLayout({
   children,
@@ -14,7 +15,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body>
+        <Providers>
+          <ImpersonateProvider>
+            {children}
+          </ImpersonateProvider>
+        </Providers>
+      </body>
     </html>
   );
 }

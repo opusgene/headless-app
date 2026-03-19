@@ -1,7 +1,7 @@
-import { ReactNode, Suspense } from "react";
-import { ImpersonateProvider } from "@/context/impersonateContext";
-import LayoutContent from "./LayoutContent";
+// app/admin/layout.tsx
 
+import { ReactNode, Suspense } from "react";
+import LayoutContent from "./LayoutContent";
 import "../globals.css";
 
 export default function AdminLayout({
@@ -11,9 +11,7 @@ export default function AdminLayout({
 }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ImpersonateProvider>
-        <LayoutContent>{children}</LayoutContent>
-      </ImpersonateProvider>
+      <LayoutContent>{children}</LayoutContent>
     </Suspense>
   );
 }
