@@ -34,21 +34,27 @@ export default function LoginPage() {
       <form onSubmit={handleLogin} className="flex flex-col gap-4 w-80">
         <h1 className="text-2xl font-bold text-center">ログイン</h1>
 
-        <input
-          type="email"
-          placeholder="メールアドレス"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 rounded"
-        />
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium">メールアドレス</label>
+          <input
+            type="email"
+            placeholder="メールアドレス"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border p-2 rounded"
+          />
+        </div>
 
-        <input
-          type="password"
-          placeholder="パスワード"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 rounded"
-        />
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium">パスワード</label>
+          <input
+            type="password"
+            placeholder="パスワード"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border p-2 rounded"
+          />
+        </div>
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
