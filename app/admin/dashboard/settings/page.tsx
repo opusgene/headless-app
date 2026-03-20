@@ -11,8 +11,13 @@ export default function CourseSettingsPage() {
   const [courseId, setCourseId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
-  const [name, setName] = useState(""); // ゴルフ場名
-  const [adminName, setAdminName] = useState(""); // 管理者名
+  const [name, setName] = useState("");
+  const [adminName, setAdminName] = useState("");
+
+  // 👇 パスワード系
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +35,6 @@ export default function CourseSettingsPage() {
 
       setUserId(user.id);
 
-      // プロフィール取得
       const { data: profile } = await supabase
         .from("profiles")
         .select("golf_course_id, role, name")
@@ -41,8 +45,8 @@ export default function CourseSettingsPage() {
 
       setAdminName(profile.name ?? "");
 
-      // 🔥 effectiveCourseId
-      const effectiveCourseId = impersonateCourseId ?? profile.golf_course_id;
+      const effectiveCourseId =
+        impersonateCourseId ?? profile.golf_course_id;
 
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
@@ -56,7 +60,6 @@ export default function CourseSettingsPage() {
 
       setCourseId(effectiveCourseId);
 
-      // ゴルフ場情報取得
       const { data: course } = await supabase
         .from("golf_courses")
         .select("name")
@@ -76,21 +79,76 @@ export default function CourseSettingsPage() {
   const handleSave = async () => {
     if (!courseId || !userId) return;
 
-    // 並列更新
-    const [courseRes, profileRes] = await Promise.all([
-      supabase.from("golf_courses").update({ name }).eq("id", courseId),
+    // =========================
+    // パスワードバリデーション
+    // =========================
+    if (newPassword || confirmPassword || currentPassword) {
+      if (!currentPassword) {
+        alert("現在のパスワードを入力してください");
+        return;
+      }
 
-      supabase.from("profiles").update({ name: adminName }).eq("id", userId),
+      if (newPassword !== confirmPassword) {
+        alert("新しいパスワードが一致しません");
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        alert("パスワードは6文字以上にしてください");
+        return;
+      }
+
+      // 現在のパスワード検証（再ログイン）
+      const { data: userData } = await supabase.auth.getUser();
+      const email = userData.user?.email;
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email!,
+        password: currentPassword,
+      });
+
+      if (signInError) {
+        alert("現在のパスワードが違います");
+        return;
+      }
+    }
+
+    // =========================
+    // データ更新
+    // =========================
+    const [courseRes, profileRes] = await Promise.all([
+      supabase
+        .from("golf_courses")
+        .update({ name })
+        .eq("id", courseId),
+
+      supabase
+        .from("profiles")
+        .update({ name: adminName })
+        .eq("id", userId),
     ]);
 
     if (courseRes.error || profileRes.error) {
-      console.error(courseRes.error, profileRes.error);
       alert("保存失敗");
       return;
     }
 
+    // =========================
+    // パスワード更新
+    // =========================
+    if (newPassword) {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (error) {
+        alert("パスワード更新失敗");
+        return;
+      }
+    }
+
     alert("保存成功");
-    window.location.reload();
+    router.refresh();
   };
 
   if (loading) return <div>読み込み中...</div>;
@@ -118,6 +176,33 @@ export default function CourseSettingsPage() {
             type="text"
             value={adminName}
             onChange={(e) => setAdminName(e.target.value)}
+            className="border p-2 rounded w-full"
+          />
+        </div>
+
+        {/* パスワード変更 */}
+        <div className="pt-4 border-t">
+          <label className="block text-sm mb-1">現在のパスワード</label>
+          <input
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            className="border p-2 rounded w-full mb-2"
+          />
+
+          <label className="block text-sm mb-1">新しいパスワード</label>
+          <input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="border p-2 rounded w-full mb-2"
+          />
+
+          <label className="block text-sm mb-1">新しいパスワード（確認）</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             className="border p-2 rounded w-full"
           />
         </div>
