@@ -42,8 +42,7 @@ export default function CourseSettingsPage() {
       setAdminName(profile.name ?? "");
 
       // 🔥 effectiveCourseId
-      const effectiveCourseId =
-        impersonateCourseId ?? profile.golf_course_id;
+      const effectiveCourseId = impersonateCourseId ?? profile.golf_course_id;
 
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
@@ -79,15 +78,9 @@ export default function CourseSettingsPage() {
 
     // 並列更新
     const [courseRes, profileRes] = await Promise.all([
-      supabase
-        .from("golf_courses")
-        .update({ name })
-        .eq("id", courseId),
+      supabase.from("golf_courses").update({ name }).eq("id", courseId),
 
-      supabase
-        .from("profiles")
-        .update({ name: adminName })
-        .eq("id", userId),
+      supabase.from("profiles").update({ name: adminName }).eq("id", userId),
     ]);
 
     if (courseRes.error || profileRes.error) {
@@ -97,7 +90,7 @@ export default function CourseSettingsPage() {
     }
 
     alert("保存成功");
-    router.refresh();
+    window.location.reload();
   };
 
   if (loading) return <div>読み込み中...</div>;
