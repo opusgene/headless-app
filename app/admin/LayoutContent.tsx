@@ -29,15 +29,17 @@ export default function LayoutContent({
   const [courseName, setCourseName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // 👇 追加（これが本質）
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const router = useRouter();
   const pathname = usePathname();
 
-  // impersonate中なら強制的にcourse_admin扱い
   const effectiveRole =
     impersonateCourseId ? "course_admin" : profile?.role;
 
   // ------------------------------
-  // ユーザープロフィール取得
+  // ユーザー取得
   // ------------------------------
   useEffect(() => {
     const load = async () => {
@@ -63,7 +65,7 @@ export default function LayoutContent({
   }, [router]);
 
   // ------------------------------
-  // ゴルフ場名取得（impersonate用）
+  // ゴルフ場名取得
   // ------------------------------
   useEffect(() => {
     const loadCourse = async () => {
@@ -85,7 +87,7 @@ export default function LayoutContent({
   }, [impersonateCourseId]);
 
   // ------------------------------
-  // メニュー定義
+  // メニュー
   // ------------------------------
   const menu: MenuItem[] = [
     {
@@ -123,16 +125,8 @@ export default function LayoutContent({
       href: "/admin/dashboard/apps",
       roles: ["course_admin"],
     },
-    {
-      label: "ログイン",
-      href: "/login",
-      roles: ["course_admin", "super_admin"],
-    },
   ];
 
-  // ------------------------------
-  // 表示メニュー
-  // ------------------------------
   const visibleMenu = menu.filter(
     (item) => effectiveRole && item.roles.includes(effectiveRole)
   );
@@ -143,7 +137,15 @@ export default function LayoutContent({
   return (
     <div className="flex flex-col h-screen">
       {/* ヘッダー */}
-      <header className="h-14 border-b border-gray-300 px-6 flex items-center bg-gradient-to-b from-gray-100 to-gray-200">
+      <header className="h-14 border-b px-4 flex items-center bg-gray-100">
+        {/* 👇 ハンバーガー（モバイルのみ） */}
+        <button
+          className="md:hidden mr-4 text-xl"
+          onClick={() => setIsSidebarOpen(true)}
+        >
+          ☰
+        </button>
+
         <span className="font-bold">Golf Admin</span>
 
         <span className="ml-auto text-sm text-gray-600">
@@ -153,7 +155,7 @@ export default function LayoutContent({
 
       {/* impersonateバナー */}
       {impersonateCourseId && (
-        <div className="bg-yellow-100 border-b border-yellow-300 px-6 py-2 flex items-center text-sm">
+        <div className="bg-yellow-100 border-b px-6 py-2 flex items-center text-sm">
           <span>
             現在、{courseName ?? "読み込み中..."}の管理者として閲覧しています
           </span>
@@ -170,10 +172,33 @@ export default function LayoutContent({
         </div>
       )}
 
-      {/* ボディ */}
-      <div className="flex flex-1">
-        {/* サイドバー */}
-        <aside className="w-64 border-r border-gray-300 p-4 bg-gradient-to-b from-gray-200 to-gray-300">
+      <div className="flex flex-1 relative">
+        {/* 👇 オーバーレイ */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/30 z-40 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
+        {/* 👇 サイドバー（ここが本質） */}
+        <aside
+          className={`
+            fixed top-0 left-0 h-full w-64 bg-white z-50
+            transform transition-transform duration-200
+            ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+            md:translate-x-0 md:static md:block
+            border-r p-4
+          `}
+        >
+          {/* 閉じるボタン */}
+          <button
+            className="md:hidden mb-4 text-right w-full"
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            ✕
+          </button>
+
           <ul className="space-y-1">
             {visibleMenu.map((item) => {
               const active = pathname === item.href;
@@ -182,9 +207,10 @@ export default function LayoutContent({
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    onClick={() => setIsSidebarOpen(false)} // 👈 モバイルで閉じる
                     className={`block px-3 py-2 rounded text-sm ${
                       active
-                        ? "bg-blue-600 text-white font-semibold"
+                        ? "bg-blue-600 text-white"
                         : "text-gray-700 hover:bg-gray-200"
                     }`}
                   >
@@ -197,7 +223,7 @@ export default function LayoutContent({
         </aside>
 
         {/* メイン */}
-        <main className="flex-1 p-8 overflow-y-auto bg-gray-100">
+        <main className="flex-1 p-6 md:p-8 overflow-y-auto bg-gray-100">
           {loading ? <div>読み込み中...</div> : children}
         </main>
       </div>
