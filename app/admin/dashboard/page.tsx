@@ -126,7 +126,7 @@ export default function DashboardPage() {
     return (
       <div className="p-4 border rounded mt-4 space-y-2">
         <p>名前: {target.name}</p>
-        <p>golf_course_id: {target.id}</p>
+        {/* <p>golf_course_id: {target.id}</p> */}
 
         <div className="mt-3">
           <p className="font-semibold">使用中のアプリケーション</p>
