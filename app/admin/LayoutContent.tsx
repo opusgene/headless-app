@@ -135,10 +135,22 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
       <header className="h-14 border-b px-4 flex items-center bg-gray-100">
         {/* 👇 ハンバーガー（モバイルのみ） */}
         <button
-          className="md:hidden mr-4 flex items-center gap-1 text-sm"
+          className="
+    md:hidden
+    mr-3
+    px-3 py-1.5
+    text-xs
+    font-medium
+    border border-gray-300
+    rounded-md
+    bg-white
+    shadow-sm
+    active:scale-95
+    transition
+  "
           onClick={() => setIsSidebarOpen(true)}
         >
-          <span className="text-xl">Menu</span>
+          ☰ Menu
         </button>
 
         <span className="font-bold">Golf Admin</span>
