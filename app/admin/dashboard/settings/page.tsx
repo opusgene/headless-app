@@ -9,7 +9,11 @@ export default function CourseSettingsPage() {
   const { impersonateCourseId } = useImpersonate();
 
   const [courseId, setCourseId] = useState<string | null>(null);
-  const [name, setName] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
+
+  const [name, setName] = useState(""); // ゴルフ場名
+  const [adminName, setAdminName] = useState(""); // 管理者名
+
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
@@ -24,19 +28,23 @@ export default function CourseSettingsPage() {
         return;
       }
 
+      setUserId(user.id);
+
       // プロフィール取得
       const { data: profile } = await supabase
         .from("profiles")
-        .select("golf_course_id, role")
+        .select("golf_course_id, role, name")
         .eq("id", user.id)
         .single();
 
       if (!profile) return;
 
-      // 🔥 ここが本質
-      const effectiveCourseId = impersonateCourseId ?? profile.golf_course_id;
+      setAdminName(profile.name ?? "");
 
-      // ✅ ここ追加
+      // 🔥 effectiveCourseId
+      const effectiveCourseId =
+        impersonateCourseId ?? profile.golf_course_id;
+
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
           router.replace("/admin/dashboard");
@@ -67,14 +75,23 @@ export default function CourseSettingsPage() {
   }, [router, impersonateCourseId]);
 
   const handleSave = async () => {
-    if (!courseId) return;
+    if (!courseId || !userId) return;
 
-    const { error } = await supabase
-      .from("golf_courses")
-      .update({ name })
-      .eq("id", courseId);
+    // 並列更新
+    const [courseRes, profileRes] = await Promise.all([
+      supabase
+        .from("golf_courses")
+        .update({ name })
+        .eq("id", courseId),
 
-    if (error) {
+      supabase
+        .from("profiles")
+        .update({ name: adminName })
+        .eq("id", userId),
+    ]);
+
+    if (courseRes.error || profileRes.error) {
+      console.error(courseRes.error, profileRes.error);
       alert("保存失敗");
       return;
     }
@@ -89,13 +106,24 @@ export default function CourseSettingsPage() {
       <h1 className="text-2xl font-bold mb-6">ゴルフ場基本情報</h1>
 
       <div className="space-y-4">
+        {/* ゴルフ場名 */}
         <div>
           <label className="block text-sm mb-1">ゴルフ場正式名称</label>
-
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            className="border p-2 rounded w-full"
+          />
+        </div>
+
+        {/* 管理者名 */}
+        <div>
+          <label className="block text-sm mb-1">管理者名</label>
+          <input
+            type="text"
+            value={adminName}
+            onChange={(e) => setAdminName(e.target.value)}
             className="border p-2 rounded w-full"
           />
         </div>
