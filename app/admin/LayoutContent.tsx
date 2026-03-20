@@ -138,7 +138,7 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
           className="md:hidden mr-4 flex items-center gap-1 text-sm"
           onClick={() => setIsSidebarOpen(true)}
         >
-          <span className="text-xl">メニュー</span>
+          <span className="text-xl">Menu</span>
         </button>
 
         <span className="font-bold">Golf Admin</span>
