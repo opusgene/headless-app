@@ -141,7 +141,7 @@ export default function CourseSettingsPage() {
     }
 
     alert("保存成功");
-    router.refresh();
+    window.location.reload();
   };
 
   if (loading) return <div>読み込み中...</div>;
