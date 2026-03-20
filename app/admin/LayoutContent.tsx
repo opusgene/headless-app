@@ -18,11 +18,7 @@ type MenuItem = {
   roles: string[];
 };
 
-export default function LayoutContent({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function LayoutContent({ children }: { children: ReactNode }) {
   const { impersonateCourseId, setImpersonateCourseId } = useImpersonate();
 
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -35,8 +31,7 @@ export default function LayoutContent({
   const router = useRouter();
   const pathname = usePathname();
 
-  const effectiveRole =
-    impersonateCourseId ? "course_admin" : profile?.role;
+  const effectiveRole = impersonateCourseId ? "course_admin" : profile?.role;
 
   // ------------------------------
   // ユーザー取得
@@ -140,10 +135,11 @@ export default function LayoutContent({
       <header className="h-14 border-b px-4 flex items-center bg-gray-100">
         {/* 👇 ハンバーガー（モバイルのみ） */}
         <button
-          className="md:hidden mr-4 text-xl"
+          className="md:hidden mr-4 flex items-center gap-1 text-sm"
           onClick={() => setIsSidebarOpen(true)}
         >
-          ☰
+          <span className="text-xl">☰</span>
+          <span>メニュー</span>
         </button>
 
         <span className="font-bold">Golf Admin</span>
