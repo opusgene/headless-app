@@ -123,7 +123,7 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
     {
       label: "ログイン",
       href: "/login",
-      roles: ["super_admin"],
+      roles: ["course_admin", "super_admin"],
     },
   ];
 
