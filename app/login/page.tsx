@@ -58,7 +58,7 @@ export default function LoginPage() {
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
-        <button className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+        <button className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 cursor-pointer">
           ログイン
         </button>
       </form>

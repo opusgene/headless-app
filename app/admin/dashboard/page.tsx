@@ -189,7 +189,7 @@ export default function DashboardPage() {
           <div className="mt-3">
             <button
               disabled={!viewCourseId}
-              className="px-3 py-1 bg-blue-600 text-white rounded disabled:bg-gray-400"
+              className="px-3 py-1 bg-blue-600 text-white rounded disabled:bg-gray-400 cursor-pointer"
               onClick={() => {
                 if (viewCourseId) {
                   setImpersonateCourseId(viewCourseId);
