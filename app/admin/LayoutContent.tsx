@@ -96,7 +96,7 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
       roles: ["super_admin"],
     },
     {
-      label: "ゴルフ場のアプリケーション管理",
+      label: "アプリケーション管理",
       href: "/admin/course",
       roles: ["super_admin"],
     },
@@ -119,6 +119,11 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
       label: "利用アプリケーションの表示・編集",
       href: "/admin/dashboard/apps",
       roles: ["course_admin"],
+    },
+    {
+      label: "ログイン",
+      href: "/login",
+      roles: ["super_admin,course_admin"],
     },
   ];
 
