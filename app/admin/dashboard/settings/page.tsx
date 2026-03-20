@@ -97,6 +97,7 @@ export default function CourseSettingsPage() {
     }
 
     alert("保存成功");
+    router.refresh();
   };
 
   if (loading) return <div>読み込み中...</div>;
