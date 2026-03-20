@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { useImpersonate } from "@/context/impersonateContext";
+import "../globals.css";
 
 export default function LoginPage() {
   const router = useRouter();
