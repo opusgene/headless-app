@@ -53,14 +53,6 @@ export default function NewUserPage() {
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
 
-        <select
-          className="border p-2 w-full"
-          onChange={(e) => setForm({ ...form, role: e.target.value })}
-        >
-          <option value="admin">管理者</option>
-          <option value="staff">スタッフ</option>
-        </select>
-
         <input
           placeholder="新規ゴルフ場名"
           className="border p-2 w-full"
