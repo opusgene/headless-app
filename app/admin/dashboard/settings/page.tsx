@@ -14,7 +14,7 @@ export default function CourseSettingsPage() {
   const [name, setName] = useState("");
   const [adminName, setAdminName] = useState("");
 
-  // パスワード
+  // 👇 パスワード系
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -33,71 +33,37 @@ export default function CourseSettingsPage() {
         return;
       }
 
-      // =========================
-      // profile取得（分岐）
-      // =========================
-      let profile: any = null;
+      setUserId(user.id);
 
-      if (impersonateCourseId) {
-        // impersonate中 → そのゴルフ場の管理者
-        const { data } = await supabase
-          .from("profiles")
-          .select("id, name, golf_course_id")
-          .eq("golf_course_id", impersonateCourseId)
-          .eq("role", "course_admin")
-          .limit(1)
-          .maybeSingle();
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("golf_course_id, role, name")
+        .eq("id", user.id)
+        .single();
 
-        profile = data;
+      if (!profile) return;
 
-        if (!profile) {
-          alert("管理者が見つかりません");
-          return;
-        }
-
-        setUserId(profile.id);
-        setCourseId(profile.golf_course_id);
-      } else {
-        // 通常
-        const { data } = await supabase
-          .from("profiles")
-          .select("id, golf_course_id, role, name")
-          .eq("id", user.id)
-          .maybeSingle();
-
-        profile = data;
-
-        if (!profile) {
-          alert("プロフィールが見つかりません");
-          return;
-        }
-
-        setUserId(profile.id);
-
-        if (!profile.golf_course_id) {
-          if (profile.role === "super_admin") {
-            router.replace("/admin/dashboard");
-            return;
-          }
-
-          alert("ゴルフ場が見つかりません");
-          return;
-        }
-
-        setCourseId(profile.golf_course_id);
-      }
-
-      // 管理者名セット
       setAdminName(profile.name ?? "");
 
-      // =========================
-      // ゴルフ場取得
-      // =========================
+      const effectiveCourseId = impersonateCourseId ?? profile.golf_course_id;
+
+      if (!effectiveCourseId) {
+        if (profile.role === "super_admin") {
+          router.replace("/admin/dashboard");
+          return;
+        }
+
+        alert("ゴルフ場が見つかりません");
+        return;
+      }
+
+      setCourseId(effectiveCourseId);
+
       const { data: course } = await supabase
         .from("golf_courses")
         .select("name")
-        .eq("id", impersonateCourseId ?? profile.golf_course_id)
-        .maybeSingle();
+        .eq("id", effectiveCourseId)
+        .single();
 
       if (course) {
         setName(course.name ?? "");
@@ -131,6 +97,7 @@ export default function CourseSettingsPage() {
         return;
       }
 
+      // 現在のパスワード検証（再ログイン）
       const { data: userData } = await supabase.auth.getUser();
       const email = userData.user?.email;
 
