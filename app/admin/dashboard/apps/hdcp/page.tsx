@@ -12,14 +12,14 @@ export default function HdcpPage() {
       <div className="space-y-4">
         <button
           className="border px-4 py-2 rounded"
-          onClick={() => router.push("/apps/hdcp/upload")}
+          onClick={() => router.push("/admin/dashboard/apps/hdcp/upload")}
         >
           CSVをアップロード
         </button>
 
         <button
           className="border px-4 py-2 rounded"
-          onClick={() => router.push("/apps/hdcp/list")}
+          onClick={() => router.push("/admin/dashboard/apps/hdcp/view")}
         >
           CSVデータ一覧を見る
         </button>
