@@ -1,20 +1,29 @@
-// app/dashboard/hdcp/page.tsx
-import Link from "next/link";
+"use client";
 
-export default function HdcpDashboard() {
+import { useRouter } from "next/navigation";
+
+export default function HdcpPage() {
+  const router = useRouter();
+
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">HDCP表 管理画面</h1>
+    <div>
+      <h1 className="text-2xl font-bold mb-6">HDCP表管理</h1>
 
-      <p className="mb-6">ここではHDCP表の登録・管理ができます。</p>
+      <div className="space-y-4">
+        <button
+          className="border px-4 py-2 rounded"
+          onClick={() => router.push("/apps/hdcp/upload")}
+        >
+          CSVをアップロード
+        </button>
 
-      {/* ▼ HDCP 表示ページへのリンク */}
-      <Link
-        href="/dashboard/hdcp/view"
-        className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        HDCP表を表示する
-      </Link>
+        <button
+          className="border px-4 py-2 rounded"
+          onClick={() => router.push("/apps/hdcp/list")}
+        >
+          CSVデータ一覧を見る
+        </button>
+      </div>
     </div>
   );
 }
