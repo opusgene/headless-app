@@ -6,12 +6,24 @@ export default function HdcpPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // 👇 URLから受け取る
+  // URLから取得
   const courseId = searchParams.get("courseId");
+  console.log("HdcpPage courseId:", courseId);
 
+  // URL生成（必須チェック込み）
   const buildUrl = (path: string) => {
-    if (!courseId) return path;
+    if (!courseId) {
+      alert("コースが選択されていません");
+      return null;
+    }
     return `${path}?courseId=${courseId}`;
+  };
+
+  const handleNavigate = (path: string) => {
+    const url = buildUrl(path);
+    if (url) {
+      router.push(url);
+    }
   };
 
   return (
@@ -22,7 +34,7 @@ export default function HdcpPage() {
         <button
           className="border px-4 py-2 rounded"
           onClick={() =>
-            router.push(buildUrl("/admin/dashboard/apps/hdcp/upload"))
+            handleNavigate("/admin/dashboard/apps/hdcp/upload")
           }
         >
           CSVをアップロード
@@ -31,12 +43,19 @@ export default function HdcpPage() {
         <button
           className="border px-4 py-2 rounded"
           onClick={() =>
-            router.push(buildUrl("/admin/dashboard/apps/hdcp/view"))
+            handleNavigate("/admin/dashboard/apps/hdcp/view")
           }
         >
           CSVデータ一覧を見る
         </button>
       </div>
+
+      {/* デバッグ用（必要なら表示） */}
+      {!courseId && (
+        <p className="text-red-500 mt-4">
+          コースが選択されていません（URLにcourseIdがありません）
+        </p>
+      )}
     </div>
   );
 }
