@@ -95,7 +95,7 @@ export default function AppsPage() {
               key={app.id}
               className="border p-3 rounded hover:bg-gray-50 cursor-pointer"
               onClick={() => {
-                if (app.name === "HDCP表") {
+                if (app.name === "HDCP表（タッチパネル形式）") {
                   router.push("/apps/hdcp");
                 }
               }}
