@@ -44,8 +44,7 @@ export default function AppsPage() {
       }
 
       // 🎯 有効なコースID（本質）
-      const effectiveCourseId =
-        impersonateCourseId ?? profile?.golf_course_id;
+      const effectiveCourseId = impersonateCourseId ?? profile?.golf_course_id;
 
       if (!effectiveCourseId) {
         console.warn("コース未選択");
@@ -66,10 +65,7 @@ export default function AppsPage() {
           )
         `
         )
-        .eq(
-          "golf_course_applications.golf_course_id",
-          effectiveCourseId
-        );
+        .eq("golf_course_applications.golf_course_id", effectiveCourseId);
 
       if (error) {
         console.error("アプリ取得エラー:", error);
@@ -98,6 +94,11 @@ export default function AppsPage() {
             <li
               key={app.id}
               className="border p-3 rounded hover:bg-gray-50 cursor-pointer"
+              onClick={() => {
+                if (app.name === "HDCP表") {
+                  router.push("/apps/hdcp");
+                }
+              }}
             >
               {app.name}
             </li>
