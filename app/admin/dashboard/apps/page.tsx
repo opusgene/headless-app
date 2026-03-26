@@ -13,6 +13,7 @@ type Application = {
 export default function AppsPage() {
   const [apps, setApps] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [courseId, setCourseId] = useState<string | null>(null); // ← 追加
 
   const router = useRouter();
   const { impersonateCourseId } = useImpersonate();
@@ -21,7 +22,6 @@ export default function AppsPage() {
     const loadApps = async () => {
       setLoading(true);
 
-      // 🔐 ユーザー取得
       const { data: userData } = await supabase.auth.getUser();
       const user = userData.user;
 
@@ -30,7 +30,6 @@ export default function AppsPage() {
         return;
       }
 
-      // 👤 プロフィール取得
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("golf_course_id, role")
@@ -43,8 +42,9 @@ export default function AppsPage() {
         return;
       }
 
-      // 🎯 有効なコースID（本質）
-      const effectiveCourseId = impersonateCourseId ?? profile?.golf_course_id;
+      // 🎯 有効なコースID
+      const effectiveCourseId =
+        impersonateCourseId ?? profile?.golf_course_id;
 
       if (!effectiveCourseId) {
         console.warn("コース未選択");
@@ -53,7 +53,8 @@ export default function AppsPage() {
         return;
       }
 
-      // 📦 アプリ取得
+      setCourseId(effectiveCourseId); // ← ここ重要
+
       const { data, error } = await supabase
         .from("applications")
         .select(
@@ -65,7 +66,10 @@ export default function AppsPage() {
           )
         `
         )
-        .eq("golf_course_applications.golf_course_id", effectiveCourseId);
+        .eq(
+          "golf_course_applications.golf_course_id",
+          effectiveCourseId
+        );
 
       if (error) {
         console.error("アプリ取得エラー:", error);
@@ -96,7 +100,14 @@ export default function AppsPage() {
               className="border p-3 rounded hover:bg-gray-50 cursor-pointer"
               onClick={() => {
                 if (app.name === "HDCP表（タッチパネル形式）") {
-                  router.push("/admin/dashboard/apps/hdcp");
+                  if (!courseId) {
+                    alert("コースが選択されていません");
+                    return;
+                  }
+
+                  router.push(
+                    `/admin/dashboard/apps/hdcp?courseId=${courseId}`
+                  );
                 }
               }}
             >

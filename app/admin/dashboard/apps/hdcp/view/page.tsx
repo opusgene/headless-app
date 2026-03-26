@@ -1,3 +1,5 @@
+// app/dashboard/hdcp/view/page.tsx
+
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -22,25 +24,29 @@ export default async function HdcpViewPage({
   if (!user) redirect("/login");
 
   // 👤 自分のコース取得
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("golf_course_id")
     .eq("id", user.id)
     .single();
 
+  if (profileError) {
+    return <p>プロフィール取得エラー</p>;
+  }
+
   // 🎯 impersonate or 自分
   const effectiveCourseId =
-    searchParams.courseId ?? profile?.golf_course_id;
+    searchParams.courseId || profile?.golf_course_id;
 
   if (!effectiveCourseId) {
     return <p>コースが選択されていません</p>;
   }
 
-  // 📦 コース単位で取得
+  // 📦 HDCP取得
   const { data: scores, error } = await supabase
     .from("hdcp_scores")
     .select("id, player_name, hdcp")
-    .eq("golf_course_id", effectiveCourseId) // ← ここが本質
+    .eq("golf_course_id", effectiveCourseId)
     .order("player_name", { ascending: true });
 
   if (error) {
