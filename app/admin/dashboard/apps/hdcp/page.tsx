@@ -1,9 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function HdcpPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // 👇 URLから受け取る
+  const courseId = searchParams.get("courseId");
+
+  const buildUrl = (path: string) => {
+    if (!courseId) return path;
+    return `${path}?courseId=${courseId}`;
+  };
 
   return (
     <div>
@@ -12,14 +21,18 @@ export default function HdcpPage() {
       <div className="space-y-4">
         <button
           className="border px-4 py-2 rounded"
-          onClick={() => router.push("/admin/dashboard/apps/hdcp/upload")}
+          onClick={() =>
+            router.push(buildUrl("/admin/dashboard/apps/hdcp/upload"))
+          }
         >
           CSVをアップロード
         </button>
 
         <button
           className="border px-4 py-2 rounded"
-          onClick={() => router.push("/admin/dashboard/apps/hdcp/view")}
+          onClick={() =>
+            router.push(buildUrl("/admin/dashboard/apps/hdcp/view"))
+          }
         >
           CSVデータ一覧を見る
         </button>
