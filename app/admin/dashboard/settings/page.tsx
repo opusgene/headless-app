@@ -9,7 +9,7 @@ export default function CourseSettingsPage() {
   const { impersonateCourseId } = useImpersonate();
 
   const [courseId, setCourseId] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [adminId, setAdminId] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [adminName, setAdminName] = useState("");
@@ -33,19 +33,16 @@ export default function CourseSettingsPage() {
         return;
       }
 
-      setUserId(user.id);
-
       const { data: profile } = await supabase
         .from("profiles")
-        .select("golf_course_id, role, name")
+        .select("golf_course_id, role")
         .eq("id", user.id)
         .single();
 
       if (!profile) return;
 
-      setAdminName(profile.name ?? "");
-
-      const effectiveCourseId = impersonateCourseId ?? profile.golf_course_id;
+      const effectiveCourseId =
+        impersonateCourseId ?? profile.golf_course_id;
 
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
@@ -59,6 +56,9 @@ export default function CourseSettingsPage() {
 
       setCourseId(effectiveCourseId);
 
+      // =========================
+      // ゴルフ場名取得
+      // =========================
       const { data: course } = await supabase
         .from("golf_courses")
         .select("name")
@@ -69,6 +69,25 @@ export default function CourseSettingsPage() {
         setName(course.name ?? "");
       }
 
+      // =========================
+      // 管理者取得（ここが今回の修正ポイント）
+      // =========================
+      const { data: adminProfile, error: adminError } = await supabase
+        .from("profiles")
+        .select("id, name")
+        .eq("golf_course_id", effectiveCourseId)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (adminError) {
+        console.error(adminError);
+      }
+
+      if (adminProfile) {
+        setAdminName(adminProfile.name ?? "");
+        setAdminId(adminProfile.id);
+      }
+
       setLoading(false);
     };
 
@@ -76,7 +95,7 @@ export default function CourseSettingsPage() {
   }, [router, impersonateCourseId]);
 
   const handleSave = async () => {
-    if (!courseId || !userId) return;
+    if (!courseId || !adminId) return;
 
     // =========================
     // パスワードバリデーション
@@ -101,10 +120,11 @@ export default function CourseSettingsPage() {
       const { data: userData } = await supabase.auth.getUser();
       const email = userData.user?.email;
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: email!,
-        password: currentPassword,
-      });
+      const { error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email: email!,
+          password: currentPassword,
+        });
 
       if (signInError) {
         alert("現在のパスワードが違います");
@@ -116,9 +136,15 @@ export default function CourseSettingsPage() {
     // データ更新
     // =========================
     const [courseRes, profileRes] = await Promise.all([
-      supabase.from("golf_courses").update({ name }).eq("id", courseId),
+      supabase
+        .from("golf_courses")
+        .update({ name })
+        .eq("id", courseId),
 
-      supabase.from("profiles").update({ name: adminName }).eq("id", userId),
+      supabase
+        .from("profiles")
+        .update({ name: adminName })
+        .eq("id", adminId),
     ]);
 
     if (courseRes.error || profileRes.error) {
@@ -182,21 +208,29 @@ export default function CourseSettingsPage() {
 
             <div className="space-y-3">
               <div>
-                <label className="block text-sm mb-1">現在のパスワード</label>
+                <label className="block text-sm mb-1">
+                  現在のパスワード
+                </label>
                 <input
                   type="password"
                   value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  onChange={(e) =>
+                    setCurrentPassword(e.target.value)
+                  }
                   className="border p-2 rounded w-full bg-white"
                 />
               </div>
 
               <div>
-                <label className="block text-sm mb-1">新しいパスワード</label>
+                <label className="block text-sm mb-1">
+                  新しいパスワード
+                </label>
                 <input
                   type="password"
                   value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  onChange={(e) =>
+                    setNewPassword(e.target.value)
+                  }
                   className="border p-2 rounded w-full bg-white"
                 />
               </div>
@@ -208,7 +242,9 @@ export default function CourseSettingsPage() {
                 <input
                   type="password"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e) =>
+                    setConfirmPassword(e.target.value)
+                  }
                   className="border p-2 rounded w-full bg-white"
                 />
               </div>
