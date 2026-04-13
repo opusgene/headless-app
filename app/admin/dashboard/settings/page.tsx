@@ -78,6 +78,7 @@ export default function CourseSettingsPage() {
           .from("profiles")
           .select("id, name")
           .eq("golf_course_id", effectiveCourseId)
+          .eq("role", "course_admin")
           .maybeSingle();
 
         if (error) {
