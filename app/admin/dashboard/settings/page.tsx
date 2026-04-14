@@ -86,6 +86,7 @@ export default function CourseSettingsPage() {
         }
 
         if (adminProfile) {
+          console.log(adminProfile);
           setAdminName(adminProfile.name ?? "");
           setAdminId(adminProfile.id);
         }
