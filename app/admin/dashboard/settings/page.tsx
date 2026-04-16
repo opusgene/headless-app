@@ -82,7 +82,7 @@ export default function CourseSettingsPage() {
           .maybeSingle();
 
         if (error) {
-          console.error(error);
+          // console.error(error);
         }
 
         if (adminProfile) {
