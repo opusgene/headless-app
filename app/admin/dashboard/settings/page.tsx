@@ -86,6 +86,8 @@ export default function CourseSettingsPage() {
 
         if (adminProfile) {
           setAdminName(adminProfile.name ?? "error");
+        } else {
+          setAdminName("error");
         }
       } else {
         // 通常 → 自分の名前
