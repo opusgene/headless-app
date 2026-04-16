@@ -86,9 +86,7 @@ export default function CourseSettingsPage() {
         }
 
         if (adminProfile) {
-          console.log(adminProfile.name);
-          setAdminName(adminProfile.name ?? "");
-          // setAdminId(adminProfile.id);
+          // setAdminName(adminProfile.name ?? "");
         }
       } else {
         // 通常 → 自分の名前
