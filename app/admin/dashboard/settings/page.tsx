@@ -86,13 +86,13 @@ export default function CourseSettingsPage() {
         }
 
         if (adminProfile) {
+          console.log(adminProfile.name);
           setAdminName(adminProfile.name ?? "");
           // setAdminId(adminProfile.id);
         }
       } else {
         // 通常 → 自分の名前
         setAdminName(profile.name ?? "");
-        // setAdminId(profile.id);
       }
 
       setLoading(false);
