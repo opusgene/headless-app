@@ -82,6 +82,7 @@ export default function CourseSettingsPage() {
           
         if (error) {
           console.error(error);
+          setAdminName("error");
         }
 
         if (adminProfile) {
