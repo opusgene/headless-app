@@ -91,8 +91,8 @@ export default function CourseSettingsPage() {
         }
       } else {
         // 通常 → 自分の名前
-        setAdminName(profile.name ?? "");
-        // setAdminId(profile.id);
+        // setAdminName(profile.name ?? "");
+        setAdminId(profile.id);
       }
 
       setLoading(false);
