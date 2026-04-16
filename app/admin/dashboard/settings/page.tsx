@@ -41,8 +41,7 @@ export default function CourseSettingsPage() {
 
       if (!profile) return;
 
-      const effectiveCourseId =
-        impersonateCourseId ?? profile.golf_course_id;
+      const effectiveCourseId = impersonateCourseId ?? profile.golf_course_id;
 
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
@@ -125,11 +124,10 @@ export default function CourseSettingsPage() {
       const { data: userData } = await supabase.auth.getUser();
       const email = userData.user?.email;
 
-      const { error: signInError } =
-        await supabase.auth.signInWithPassword({
-          email: email!,
-          password: currentPassword,
-        });
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email!,
+        password: currentPassword,
+      });
 
       if (signInError) {
         alert("現在のパスワードが違います");
@@ -141,15 +139,9 @@ export default function CourseSettingsPage() {
     // データ更新
     // =========================
     const [courseRes, profileRes] = await Promise.all([
-      supabase
-        .from("golf_courses")
-        .update({ name })
-        .eq("id", courseId),
+      supabase.from("golf_courses").update({ name }).eq("id", courseId),
 
-      supabase
-        .from("profiles")
-        .update({ name: adminName })
-        .eq("id", adminId),
+      supabase.from("profiles").update({ name: adminName }).eq("id", adminId),
     ]);
 
     if (courseRes.error || profileRes.error) {
@@ -203,60 +195,49 @@ export default function CourseSettingsPage() {
             className="border p-2 rounded w-full"
           />
         </div>
+        {!impersonateCourseId && (
+          <div className="pt-6">
+            <div className="border rounded-lg p-4 bg-gray-50">
+              <h2 className="text-lg font-semibold mb-4">
+                パスワードの変更はこちら
+              </h2>
 
-        {/* パスワード変更 */}
-        <div className="pt-6">
-          <div className="border rounded-lg p-4 bg-gray-50">
-            <h2 className="text-lg font-semibold mb-4">
-              パスワードの変更はこちら
-            </h2>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm mb-1">現在のパスワード</label>
+                  <input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="border p-2 rounded w-full bg-white"
+                  />
+                </div>
 
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm mb-1">
-                  現在のパスワード
-                </label>
-                <input
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) =>
-                    setCurrentPassword(e.target.value)
-                  }
-                  className="border p-2 rounded w-full bg-white"
-                />
-              </div>
+                <div>
+                  <label className="block text-sm mb-1">新しいパスワード</label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="border p-2 rounded w-full bg-white"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm mb-1">
-                  新しいパスワード
-                </label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) =>
-                    setNewPassword(e.target.value)
-                  }
-                  className="border p-2 rounded w-full bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm mb-1">
-                  新しいパスワード（確認）
-                </label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) =>
-                    setConfirmPassword(e.target.value)
-                  }
-                  className="border p-2 rounded w-full bg-white"
-                />
+                <div>
+                  <label className="block text-sm mb-1">
+                    新しいパスワード（確認）
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="border p-2 rounded w-full bg-white"
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
+        )}
         <button
           onClick={handleSave}
           className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
