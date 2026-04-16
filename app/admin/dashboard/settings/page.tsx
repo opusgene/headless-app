@@ -85,11 +85,11 @@ export default function CourseSettingsPage() {
         }
 
         if (adminProfile) {
-          setAdminName(adminProfile.name ?? "");
+          setAdminName(adminProfile.name ?? "error");
         }
       } else {
         // 通常 → 自分の名前
-        setAdminName(profile.name ?? "");
+        setAdminName(profile.name ?? "error");
       }
 
       setLoading(false);
