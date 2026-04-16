@@ -77,7 +77,7 @@ export default function CourseSettingsPage() {
           .from("profiles")
           .select("id, name")
           .eq("golf_course_id", effectiveCourseId)
-          .eq("role", "course_admin")
+          // .eq("role", "course_admin")
           .maybeSingle();
 
         if (error) {
@@ -85,13 +85,13 @@ export default function CourseSettingsPage() {
         }
 
         if (adminProfile) {
-          setAdminName(adminProfile.name ?? "error");
+          setAdminName(adminProfile.name ?? "");
         } else {
           setAdminName("error");
         }
       } else {
         // 通常 → 自分の名前
-        setAdminName(profile.name ?? "error");
+        setAdminName(profile.name ?? "");
       }
 
       setLoading(false);
