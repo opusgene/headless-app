@@ -73,21 +73,21 @@ export default function CourseSettingsPage() {
       // 管理者名の分岐
       // =========================
       if (impersonateCourseId) {
-        // // impersonate中 → コース管理者を取得
-        // const { data: adminProfile, error } = await supabase
-        //   .from("profiles")
-        //   .select("id, name")
-        //   .eq("golf_course_id", effectiveCourseId)
-        //   .eq("role", "course_admin")
-        //   .maybeSingle();
+        // impersonate中 → コース管理者を取得
+        const { data: adminProfile, error } = await supabase
+          .from("profiles")
+          .select("id, name")
+          .eq("golf_course_id", effectiveCourseId)
+          .eq("role", "course_admin")
+          .maybeSingle();
 
-        // if (error) {
-        //   // console.error(error);
-        // }
+        if (error) {
+          // console.error(error);
+        }
 
-        // if (adminProfile) {
-        //   // setAdminName(adminProfile.name ?? "");
-        // }
+        if (adminProfile) {
+          // setAdminName(adminProfile.name ?? "");
+        }
       } else {
         // 通常 → 自分の名前
         setAdminName(profile.name ?? "");
