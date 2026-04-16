@@ -77,9 +77,13 @@ export default function CourseSettingsPage() {
           .from("profiles")
           .select("name")
           .eq("golf_course_id", effectiveCourseId)
-          // .eq("role", "course_admin")
+          .eq("role", "course_admin")
           .maybeSingle();
-          
+
+        const { data } = await supabase.from("profiles").select("*");
+
+        console.log(data);
+
         if (error) {
           console.error(error);
         }
