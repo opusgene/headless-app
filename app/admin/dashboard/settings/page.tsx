@@ -77,12 +77,11 @@ export default function CourseSettingsPage() {
           .from("profiles")
           .select("name")
           .eq("golf_course_id", effectiveCourseId)
-          .eq("role", "course_admin")
+          // .eq("role", "course_admin")
           .maybeSingle();
           
         if (error) {
           console.error(error);
-          setAdminName("error");
         }
 
         if (adminProfile) {
