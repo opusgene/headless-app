@@ -80,13 +80,6 @@ export default function CourseSettingsPage() {
           .eq("role", "course_admin")
           .maybeSingle();
 
-          const { data } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("golf_course_id", effectiveCourseId);
-        
-        console.log(data);
-
         if (error) {
           console.error(error);
         }
