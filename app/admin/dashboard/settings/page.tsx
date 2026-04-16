@@ -75,11 +75,11 @@ export default function CourseSettingsPage() {
         // impersonate中 → コース管理者を取得
         const { data: adminProfile, error } = await supabase
           .from("profiles")
-          .select("id,name")
+          .select("name")
           .eq("golf_course_id", effectiveCourseId)
           .eq("role", "course_admin")
           .maybeSingle();
-
+          
         if (error) {
           console.error(error);
         }
