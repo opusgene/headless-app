@@ -70,11 +70,16 @@ export async function POST(req: Request) {
      * ============================ */
 
     const { data: userData, error: authError } =
-      await supabaseAdmin.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-      });
+    await supabaseAdmin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: {
+        role: role,
+        name: name,
+        golf_course_id: golfCourse.id,
+      },
+    });
 
     if (authError) {
       throw authError;

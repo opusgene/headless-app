@@ -13,7 +13,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  // 🔥 ここ追加
   useEffect(() => {
     setImpersonateCourseId(null);
   }, []);
