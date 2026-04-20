@@ -27,6 +27,7 @@ export default function CourseSettingsPage() {
     const loadCourse = async () => {
       const { data: userData } = await supabase.auth.getUser();
       const user = userData.user;
+      console.log(user);
 
       if (!user) {
         router.push("/login");
