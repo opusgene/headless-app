@@ -89,7 +89,7 @@ export default function CourseSettingsPage() {
           setAdminName(adminProfile.name ?? "");
           // setAdminId(adminProfile.id);
         } else {
-          setAdminName(profile.name ?? "");
+          // setAdminName(profile.name ?? "");
           // setAdminId(profile.id);
         }
       } else {
