@@ -42,7 +42,14 @@ export default function CourseSettingsPage() {
 
       if (!profile) return;
 
+
+      console.log("impersonateCourseId:", impersonateCourseId);
+      console.log("profile.golf_course_id:", profile.golf_course_id);
+
       const effectiveCourseId = impersonateCourseId ?? profile.golf_course_id;
+
+      console.log("effectiveCourseId:", effectiveCourseId);
+
 
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
