@@ -74,10 +74,12 @@ export async function POST(req: Request) {
       email,
       password,
       email_confirm: true,
-      user_metadata: {
+      app_metadata: {
         role: role,
-        name: name,
         golf_course_id: golfCourse.id,
+      },
+      user_metadata: {
+        name: name,
       },
     });
 
