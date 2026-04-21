@@ -29,12 +29,15 @@ export default function CourseSettingsPage() {
       const user = userData.user;
       console.log(user);
 
+      const session = await supabase.auth.getSession();
+      console.log(session.data.session?.user);
+
       if (!user) {
         router.push("/login");
         return;
       }
       const { data, error } = await supabase.from("profiles").select("*");
-      console.log("all data" , data);
+      console.log("all data", data);
 
       const { data: profile } = await supabase
         .from("profiles")
@@ -50,8 +53,6 @@ export default function CourseSettingsPage() {
       const effectiveCourseId = impersonateCourseId ?? profile.golf_course_id;
 
       console.log("effectiveCourseId:", effectiveCourseId);
-
-
 
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
