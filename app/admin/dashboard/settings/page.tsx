@@ -33,6 +33,8 @@ export default function CourseSettingsPage() {
         router.push("/login");
         return;
       }
+      const { data, error } = await supabase.from("profiles").select("*");
+      console.log("all data" , data);
 
       const { data: profile } = await supabase
         .from("profiles")
@@ -49,9 +51,7 @@ export default function CourseSettingsPage() {
 
       console.log("effectiveCourseId:", effectiveCourseId);
 
-      const { data, error } = await supabase.from("profiles").select("*");
 
-      console.log(data);
 
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
