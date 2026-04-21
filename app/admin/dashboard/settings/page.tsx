@@ -42,7 +42,6 @@ export default function CourseSettingsPage() {
 
       if (!profile) return;
 
-
       console.log("impersonateCourseId:", impersonateCourseId);
       console.log("profile.golf_course_id:", profile.golf_course_id);
 
@@ -50,6 +49,9 @@ export default function CourseSettingsPage() {
 
       console.log("effectiveCourseId:", effectiveCourseId);
 
+      const { data, error } = await supabase.from("profiles").select("*");
+
+      console.log(data);
 
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
