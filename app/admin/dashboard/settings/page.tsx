@@ -147,8 +147,9 @@ export default function CourseSettingsPage() {
         .eq("id", adminId),
     ]);
 
-    console.log(profileRes);
-    console.log(profileRes.error);
+    console.log("courseRes:", courseRes);
+    console.log("profileRes:", profileRes);
+    console.log("profileRes.error:", profileRes.error);
 
     if (courseRes.error || profileRes.error) {
       alert("保存失敗");
