@@ -95,8 +95,6 @@ export default function CourseSettingsPage() {
   }, [router, impersonateCourseId]);
 
   const handleSave = async () => {
-    console.log("adminId:", adminId); // ←ここ
-
     if (!courseId || !adminId) return;
 
     // パスワードチェック
@@ -138,6 +136,10 @@ export default function CourseSettingsPage() {
 
       supabase.from("profiles").update({ name: adminName }).eq("id", adminId),
     ]);
+
+    console.log("profile update error:", profileRes.error);
+    console.log("profile update status:", profileRes.status);
+    console.log("profile update data:", profileRes.data);
 
     if (courseRes.error || profileRes.error) {
       alert("保存失敗");
