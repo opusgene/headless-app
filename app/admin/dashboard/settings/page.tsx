@@ -32,9 +32,10 @@ export default function CourseSettingsPage() {
         return;
       }
 
+      // ログインユーザー（コース特定用）
       const { data: profile } = await supabase
         .from("profiles")
-        .select("id, golf_course_id, role, name")
+        .select("id, golf_course_id, role")
         .eq("id", user.id)
         .single();
 
@@ -55,7 +56,9 @@ export default function CourseSettingsPage() {
 
       setCourseId(effectiveCourseId);
 
-      // ゴルフ場名取得
+      // =========================
+      // ゴルフ場名
+      // =========================
       const { data: course } = await supabase
         .from("golf_courses")
         .select("name")
@@ -66,29 +69,26 @@ export default function CourseSettingsPage() {
         setName(course.name ?? "");
       }
 
-      // 管理者名の分岐
-      if (impersonateCourseId) {
-        const { data: adminProfile, error } = await supabase
-          .from("profiles")
-          .select("id, name")
-          .eq("golf_course_id", effectiveCourseId)
-          .eq("role", "course_admin")
-          .maybeSingle();
+      // =========================
+      // ★ここが本体：管理者取得（統一ロジック）
+      // =========================
+      const { data: adminProfile, error } = await supabase
+        .from("profiles")
+        .select("id, name")
+        .eq("golf_course_id", effectiveCourseId)
+        .eq("role", "course_admin")
+        .maybeSingle();
 
-        if (error) {
-          console.error(error);
-        }
+      if (error) {
+        console.error(error);
+      }
 
-        if (adminProfile) {
-          setAdminName(adminProfile.name ?? "");
-          setAdminId(adminProfile.id);
-        } else {
-          setAdminName("");
-          setAdminId(null);
-        }
+      if (adminProfile) {
+        setAdminName(adminProfile.name ?? "");
+        setAdminId(adminProfile.id);
       } else {
-        setAdminName(profile.name ?? "");
-        setAdminId(profile.id);
+        setAdminName("");
+        setAdminId(null);
       }
 
       setLoading(false);
@@ -100,7 +100,7 @@ export default function CourseSettingsPage() {
   const handleSave = async () => {
     if (!courseId || !adminId) return;
 
-    // パスワードバリデーション
+    // パスワードチェック
     if (newPassword || confirmPassword || currentPassword) {
       if (!currentPassword) {
         alert("現在のパスワードを入力してください");
@@ -132,7 +132,9 @@ export default function CourseSettingsPage() {
       }
     }
 
-    // データ更新
+    // =========================
+    // 更新処理
+    // =========================
     const [courseRes, profileRes] = await Promise.all([
       supabase
         .from("golf_courses")
@@ -173,6 +175,7 @@ export default function CourseSettingsPage() {
       <h1 className="text-2xl font-bold mb-6">ゴルフ場基本情報</h1>
 
       <div className="space-y-4">
+        {/* ゴルフ場名 */}
         <div>
           <label className="block text-sm mb-1">ゴルフ場正式名称</label>
           <input
@@ -183,6 +186,7 @@ export default function CourseSettingsPage() {
           />
         </div>
 
+        {/* 管理者名 */}
         <div>
           <label className="block text-sm mb-1">管理者名</label>
           <input
@@ -204,9 +208,7 @@ export default function CourseSettingsPage() {
                 <input
                   type="password"
                   value={currentPassword}
-                  onChange={(e) =>
-                    setCurrentPassword(e.target.value)
-                  }
+                  onChange={(e) => setCurrentPassword(e.target.value)}
                   className="border p-2 rounded w-full bg-white"
                   placeholder="現在のパスワード"
                 />
@@ -214,9 +216,7 @@ export default function CourseSettingsPage() {
                 <input
                   type="password"
                   value={newPassword}
-                  onChange={(e) =>
-                    setNewPassword(e.target.value)
-                  }
+                  onChange={(e) => setNewPassword(e.target.value)}
                   className="border p-2 rounded w-full bg-white"
                   placeholder="新しいパスワード"
                 />
