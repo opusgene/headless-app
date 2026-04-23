@@ -95,6 +95,8 @@ export default function CourseSettingsPage() {
   }, [router, impersonateCourseId]);
 
   const handleSave = async () => {
+    console.log("adminId:", adminId); // ←ここ
+
     if (!courseId || !adminId) return;
 
     // パスワードチェック
