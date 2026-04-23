@@ -14,7 +14,6 @@ export default function CourseSettingsPage() {
   const [name, setName] = useState("");
   const [adminName, setAdminName] = useState("");
 
-  // 👇 パスワード系
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -27,17 +26,11 @@ export default function CourseSettingsPage() {
     const loadCourse = async () => {
       const { data: userData } = await supabase.auth.getUser();
       const user = userData.user;
-      console.log(user);
-
-      const session = await supabase.auth.getSession();
-      console.log(session.data.session?.user);
 
       if (!user) {
         router.push("/login");
         return;
       }
-      const { data, error } = await supabase.from("profiles").select("*");
-      console.log("all data", data);
 
       const { data: profile } = await supabase
         .from("profiles")
@@ -47,12 +40,8 @@ export default function CourseSettingsPage() {
 
       if (!profile) return;
 
-      console.log("impersonateCourseId:", impersonateCourseId);
-      console.log("profile.golf_course_id:", profile.golf_course_id);
-
-      const effectiveCourseId = impersonateCourseId ?? profile.golf_course_id;
-
-      console.log("effectiveCourseId:", effectiveCourseId);
+      const effectiveCourseId =
+        impersonateCourseId ?? profile.golf_course_id;
 
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
@@ -66,9 +55,7 @@ export default function CourseSettingsPage() {
 
       setCourseId(effectiveCourseId);
 
-      // =========================
       // ゴルフ場名取得
-      // =========================
       const { data: course } = await supabase
         .from("golf_courses")
         .select("name")
@@ -79,14 +66,11 @@ export default function CourseSettingsPage() {
         setName(course.name ?? "");
       }
 
-      // =========================
       // 管理者名の分岐
-      // =========================
       if (impersonateCourseId) {
-        // impersonate中 → コース管理者を取得
         const { data: adminProfile, error } = await supabase
           .from("profiles")
-          .select("name")
+          .select("id, name")
           .eq("golf_course_id", effectiveCourseId)
           .eq("role", "course_admin")
           .maybeSingle();
@@ -97,12 +81,14 @@ export default function CourseSettingsPage() {
 
         if (adminProfile) {
           setAdminName(adminProfile.name ?? "");
+          setAdminId(adminProfile.id);
         } else {
-          setAdminName(effectiveCourseId);
+          setAdminName("");
+          setAdminId(null);
         }
       } else {
-        // 通常 → 自分の名前
         setAdminName(profile.name ?? "");
+        setAdminId(profile.id);
       }
 
       setLoading(false);
@@ -114,9 +100,7 @@ export default function CourseSettingsPage() {
   const handleSave = async () => {
     if (!courseId || !adminId) return;
 
-    // =========================
     // パスワードバリデーション
-    // =========================
     if (newPassword || confirmPassword || currentPassword) {
       if (!currentPassword) {
         alert("現在のパスワードを入力してください");
@@ -133,14 +117,14 @@ export default function CourseSettingsPage() {
         return;
       }
 
-      // 現在のパスワード検証
       const { data: userData } = await supabase.auth.getUser();
       const email = userData.user?.email;
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: email!,
-        password: currentPassword,
-      });
+      const { error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email: email!,
+          password: currentPassword,
+        });
 
       if (signInError) {
         alert("現在のパスワードが違います");
@@ -148,13 +132,17 @@ export default function CourseSettingsPage() {
       }
     }
 
-    // =========================
     // データ更新
-    // =========================
     const [courseRes, profileRes] = await Promise.all([
-      supabase.from("golf_courses").update({ name }).eq("id", courseId),
+      supabase
+        .from("golf_courses")
+        .update({ name })
+        .eq("id", courseId),
 
-      supabase.from("profiles").update({ name: adminName }).eq("id", adminId),
+      supabase
+        .from("profiles")
+        .update({ name: adminName })
+        .eq("id", adminId),
     ]);
 
     if (courseRes.error || profileRes.error) {
@@ -162,9 +150,7 @@ export default function CourseSettingsPage() {
       return;
     }
 
-    // =========================
     // パスワード更新
-    // =========================
     if (newPassword) {
       const { error } = await supabase.auth.updateUser({
         password: newPassword,
@@ -187,7 +173,6 @@ export default function CourseSettingsPage() {
       <h1 className="text-2xl font-bold mb-6">ゴルフ場基本情報</h1>
 
       <div className="space-y-4">
-        {/* ゴルフ場名 */}
         <div>
           <label className="block text-sm mb-1">ゴルフ場正式名称</label>
           <input
@@ -198,7 +183,6 @@ export default function CourseSettingsPage() {
           />
         </div>
 
-        {/* 管理者名 */}
         <div>
           <label className="block text-sm mb-1">管理者名</label>
           <input
@@ -208,6 +192,7 @@ export default function CourseSettingsPage() {
             className="border p-2 rounded w-full"
           />
         </div>
+
         {!impersonateCourseId && (
           <div className="pt-6">
             <div className="border rounded-lg p-4 bg-gray-50">
@@ -216,41 +201,40 @@ export default function CourseSettingsPage() {
               </h2>
 
               <div className="space-y-3">
-                <div>
-                  <label className="block text-sm mb-1">現在のパスワード</label>
-                  <input
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="border p-2 rounded w-full bg-white"
-                  />
-                </div>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) =>
+                    setCurrentPassword(e.target.value)
+                  }
+                  className="border p-2 rounded w-full bg-white"
+                  placeholder="現在のパスワード"
+                />
 
-                <div>
-                  <label className="block text-sm mb-1">新しいパスワード</label>
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="border p-2 rounded w-full bg-white"
-                  />
-                </div>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) =>
+                    setNewPassword(e.target.value)
+                  }
+                  className="border p-2 rounded w-full bg-white"
+                  placeholder="新しいパスワード"
+                />
 
-                <div>
-                  <label className="block text-sm mb-1">
-                    新しいパスワード（確認）
-                  </label>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="border p-2 rounded w-full bg-white"
-                  />
-                </div>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) =>
+                    setConfirmPassword(e.target.value)
+                  }
+                  className="border p-2 rounded w-full bg-white"
+                  placeholder="新しいパスワード（確認）"
+                />
               </div>
             </div>
           </div>
         )}
+
         <button
           onClick={handleSave}
           className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
