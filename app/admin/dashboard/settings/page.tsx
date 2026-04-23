@@ -41,8 +41,7 @@ export default function CourseSettingsPage() {
 
       if (!profile) return;
 
-      const effectiveCourseId =
-        impersonateCourseId ?? profile.golf_course_id;
+      const effectiveCourseId = impersonateCourseId ?? profile.golf_course_id;
 
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
@@ -72,16 +71,14 @@ export default function CourseSettingsPage() {
       // =========================
       // ★ここが本体：管理者取得（統一ロジック）
       // =========================
-      const { data: adminProfile, error } = await supabase
+      const { data: adminProfiles } = await supabase
         .from("profiles")
         .select("id, name")
         .eq("golf_course_id", effectiveCourseId)
         .eq("role", "course_admin")
-        .maybeSingle();
+        .limit(1);
 
-      if (error) {
-        console.error(error);
-      }
+      const adminProfile = adminProfiles?.[0];
 
       if (adminProfile) {
         setAdminName(adminProfile.name ?? "");
@@ -120,11 +117,10 @@ export default function CourseSettingsPage() {
       const { data: userData } = await supabase.auth.getUser();
       const email = userData.user?.email;
 
-      const { error: signInError } =
-        await supabase.auth.signInWithPassword({
-          email: email!,
-          password: currentPassword,
-        });
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email!,
+        password: currentPassword,
+      });
 
       if (signInError) {
         alert("現在のパスワードが違います");
@@ -136,15 +132,9 @@ export default function CourseSettingsPage() {
     // 更新処理
     // =========================
     const [courseRes, profileRes] = await Promise.all([
-      supabase
-        .from("golf_courses")
-        .update({ name })
-        .eq("id", courseId),
+      supabase.from("golf_courses").update({ name }).eq("id", courseId),
 
-      supabase
-        .from("profiles")
-        .update({ name: adminName })
-        .eq("id", adminId),
+      supabase.from("profiles").update({ name: adminName }).eq("id", adminId),
     ]);
 
     if (courseRes.error || profileRes.error) {
@@ -224,9 +214,7 @@ export default function CourseSettingsPage() {
                 <input
                   type="password"
                   value={confirmPassword}
-                  onChange={(e) =>
-                    setConfirmPassword(e.target.value)
-                  }
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   className="border p-2 rounded w-full bg-white"
                   placeholder="新しいパスワード（確認）"
                 />
