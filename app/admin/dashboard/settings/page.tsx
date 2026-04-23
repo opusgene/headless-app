@@ -147,10 +147,6 @@ export default function CourseSettingsPage() {
         .eq("id", adminId),
     ]);
 
-    console.log("courseRes:", courseRes);
-    console.log("profileRes:", profileRes);
-    console.log("profileRes.error:", profileRes.error);
-
     if (courseRes.error || profileRes.error) {
       alert("保存失敗");
       return;
@@ -169,7 +165,7 @@ export default function CourseSettingsPage() {
     }
 
     alert("保存成功");
-    // window.location.reload();
+    window.location.reload();
   };
 
   if (loading) return <div>読み込み中...</div>;
