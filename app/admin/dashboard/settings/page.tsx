@@ -32,7 +32,6 @@ export default function CourseSettingsPage() {
         return;
       }
 
-      // ログインユーザー（コース特定用）
       const { data: profile } = await supabase
         .from("profiles")
         .select("id, golf_course_id, role")
@@ -41,51 +40,53 @@ export default function CourseSettingsPage() {
 
       if (!profile) return;
 
-      const effectiveCourseId = impersonateCourseId ?? profile.golf_course_id;
+      const effectiveCourseId =
+        impersonateCourseId ?? profile.golf_course_id;
 
       if (!effectiveCourseId) {
         if (profile.role === "super_admin") {
           router.replace("/admin/dashboard");
           return;
         }
-
         alert("ゴルフ場が見つかりません");
         return;
       }
 
       setCourseId(effectiveCourseId);
 
-      // =========================
       // ゴルフ場名
-      // =========================
       const { data: course } = await supabase
         .from("golf_courses")
         .select("name")
         .eq("id", effectiveCourseId)
         .single();
 
-      if (course) {
-        setName(course.name ?? "");
-      }
+      if (course) setName(course.name ?? "");
 
       // =========================
-      // ★ここが本体：管理者取得（統一ロジック）
+      // 管理者取得（重要改善）
       // =========================
-      const { data: adminProfiles } = await supabase
+      const { data: adminProfiles, error: adminError } = await supabase
         .from("profiles")
         .select("id, name")
         .eq("golf_course_id", effectiveCourseId)
         .eq("role", "course_admin")
+        .order("created_at", { ascending: true })
         .limit(1);
+
+      if (adminError) {
+        console.error("admin fetch error:", adminError);
+      }
 
       const adminProfile = adminProfiles?.[0];
 
-      if (adminProfile) {
-        setAdminName(adminProfile.name ?? "");
-        setAdminId(adminProfile.id);
-      } else {
-        setAdminName("");
+      if (!adminProfile) {
+        console.warn("adminProfile not found");
         setAdminId(null);
+        setAdminName("");
+      } else {
+        setAdminId(adminProfile.id);
+        setAdminName(adminProfile.name ?? "");
       }
 
       setLoading(false);
@@ -95,7 +96,14 @@ export default function CourseSettingsPage() {
   }, [router, impersonateCourseId]);
 
   const handleSave = async () => {
-    if (!courseId || !adminId) return;
+    if (!courseId) return;
+
+    if (!adminId) {
+      alert("管理者IDが取得できていません");
+      return;
+    }
+
+    console.log("UPDATING adminId:", adminId);
 
     // パスワードチェック
     if (newPassword || confirmPassword || currentPassword) {
@@ -129,17 +137,22 @@ export default function CourseSettingsPage() {
     }
 
     // =========================
-    // 更新処理
+    // UPDATE
     // =========================
     const [courseRes, profileRes] = await Promise.all([
-      supabase.from("golf_courses").update({ name }).eq("id", courseId),
+      supabase
+        .from("golf_courses")
+        .update({ name })
+        .eq("id", courseId),
 
-      supabase.from("profiles").update({ name: adminName }).eq("id", adminId),
+      supabase
+        .from("profiles")
+        .update({ name: adminName })
+        .eq("id", adminId),
     ]);
 
-    console.log("profile update error:", profileRes.error);
-    console.log("profile update status:", profileRes.status);
-    console.log("profile update data:", profileRes.data);
+    console.log("courseRes:", courseRes);
+    console.log("profileRes:", profileRes);
 
     if (courseRes.error || profileRes.error) {
       alert("保存失敗");
@@ -169,67 +182,27 @@ export default function CourseSettingsPage() {
       <h1 className="text-2xl font-bold mb-6">ゴルフ場基本情報</h1>
 
       <div className="space-y-4">
-        {/* ゴルフ場名 */}
         <div>
           <label className="block text-sm mb-1">ゴルフ場正式名称</label>
           <input
-            type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="border p-2 rounded w-full"
+            className="border p-2 w-full"
           />
         </div>
 
-        {/* 管理者名 */}
         <div>
           <label className="block text-sm mb-1">管理者名</label>
           <input
-            type="text"
             value={adminName}
             onChange={(e) => setAdminName(e.target.value)}
-            className="border p-2 rounded w-full"
+            className="border p-2 w-full"
           />
         </div>
 
-        {!impersonateCourseId && (
-          <div className="pt-6">
-            <div className="border rounded-lg p-4 bg-gray-50">
-              <h2 className="text-lg font-semibold mb-4">
-                パスワードの変更はこちら
-              </h2>
-
-              <div className="space-y-3">
-                <input
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="border p-2 rounded w-full bg-white"
-                  placeholder="現在のパスワード"
-                />
-
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="border p-2 rounded w-full bg-white"
-                  placeholder="新しいパスワード"
-                />
-
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="border p-2 rounded w-full bg-white"
-                  placeholder="新しいパスワード（確認）"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
         <button
           onClick={handleSave}
-          className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
+          className="bg-blue-600 text-white px-4 py-2 rounded"
         >
           保存
         </button>
