@@ -31,6 +31,10 @@ export default function FairwayGuideAdminPage() {
     return `/api/admin/fairway-guide/${golfCourseSlug}`;
   }, [golfCourseSlug]);
 
+  const signageUrl = useMemo(() => {
+    return `/signage/fairway-guide/${golfCourseSlug}`;
+  }, [golfCourseSlug]);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -88,6 +92,10 @@ export default function FairwayGuideAdminPage() {
     }
   };
 
+  const openSignage = () => {
+    window.open(signageUrl, "_blank");
+  };
+
   if (loading) {
     return (
       <div className="p-6 text-gray-500">
@@ -110,6 +118,15 @@ export default function FairwayGuideAdminPage() {
             最終更新: {new Date(state.updatedAt).toLocaleString()}
           </p>
         )}
+      </div>
+
+      <div className="flex gap-3">
+        <button
+          onClick={openSignage}
+          className="px-4 py-2 border rounded bg-white hover:bg-gray-50"
+        >
+          配信画面を見る
+        </button>
       </div>
 
       <div className="space-y-4 border rounded-lg p-4">
