@@ -8,12 +8,18 @@ import { useImpersonate } from "@/context/impersonateContext";
 type Application = {
   id: number;
   name: string;
+  route_path: string | null;
 };
 
 export default function AppsPage() {
   const [apps, setApps] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
-  const [courseId, setCourseId] = useState<string | null>(null); // ← 追加
+
+  // golf_courses.id
+  const [courseId, setCourseId] = useState<string | null>(null);
+
+  // golf_courses.code
+  const [courseCode, setCourseCode] = useState<string | null>(null);
 
   const router = useRouter();
   const { impersonateCourseId } = useImpersonate();
@@ -22,6 +28,9 @@ export default function AppsPage() {
     const loadApps = async () => {
       setLoading(true);
 
+      // =========================
+      // ログインユーザー取得
+      // =========================
       const { data: userData } = await supabase.auth.getUser();
       const user = userData.user;
 
@@ -30,6 +39,9 @@ export default function AppsPage() {
         return;
       }
 
+      // =========================
+      // profile取得
+      // =========================
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("golf_course_id, role")
@@ -42,7 +54,9 @@ export default function AppsPage() {
         return;
       }
 
-      // 🎯 有効なコースID
+      // =========================
+      // impersonate考慮
+      // =========================
       const effectiveCourseId =
         impersonateCourseId ?? profile?.golf_course_id;
 
@@ -53,14 +67,37 @@ export default function AppsPage() {
         return;
       }
 
-      setCourseId(effectiveCourseId); // ← ここ重要
+      setCourseId(effectiveCourseId);
 
+      // =========================
+      // golf_courses.code取得
+      // =========================
+      const { data: golfCourse, error: golfCourseError } =
+        await supabase
+          .from("golf_courses")
+          .select("code")
+          .eq("id", effectiveCourseId)
+          .single();
+
+      if (golfCourseError) {
+        console.error(
+          "ゴルフ場コード取得エラー:",
+          golfCourseError
+        );
+      } else {
+        setCourseCode(golfCourse?.code ?? null);
+      }
+
+      // =========================
+      // 利用可能アプリ取得
+      // =========================
       const { data, error } = await supabase
         .from("applications")
         .select(
           `
           id,
           name,
+          route_path,
           golf_course_applications!inner (
             golf_course_id
           )
@@ -84,9 +121,43 @@ export default function AppsPage() {
     loadApps();
   }, [router, impersonateCourseId]);
 
+  // =========================
+  // route_path置換関数
+  // =========================
+  const compileRoutePath = (
+    routePath: string,
+    params: {
+      courseId?: string;
+      code?: string;
+    }
+  ) => {
+    return routePath
+      .replaceAll("{courseId}", params.courseId ?? "")
+      .replaceAll("{code}", params.code ?? "");
+  };
+
+  // =========================
+  // アプリクリック
+  // =========================
+  const handleAppClick = (app: Application) => {
+    if (!app.route_path) {
+      alert("遷移先URLが設定されていません");
+      return;
+    }
+
+    const path = compileRoutePath(app.route_path, {
+      courseId: courseId ?? "",
+      code: courseCode ?? "",
+    });
+
+    router.push(path);
+  };
+
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">利用可能アプリ一覧</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        利用可能アプリ一覧
+      </h1>
 
       {loading ? (
         <p>読み込み中...</p>
@@ -97,19 +168,8 @@ export default function AppsPage() {
           {apps.map((app) => (
             <li
               key={app.id}
-              className="border p-3 rounded hover:bg-gray-50 cursor-pointer"
-              onClick={() => {
-                if (app.name === "HDCP表（タッチパネル形式）") {
-                  if (!courseId) {
-                    alert("コースが選択されていません");
-                    return;
-                  }
-
-                  router.push(
-                    `/admin/dashboard/apps/hdcp?courseId=${courseId}`
-                  );
-                }
-              }}
+              className="border p-3 rounded hover:bg-gray-50 cursor-pointer transition"
+              onClick={() => handleAppClick(app)}
             >
               {app.name}
             </li>
