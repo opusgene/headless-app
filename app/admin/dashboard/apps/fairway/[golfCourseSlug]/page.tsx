@@ -176,7 +176,7 @@ export default function FairwayGuideAdminPage() {
           <div className="space-y-3">
             <div>
               <label className="block font-medium mb-2">
-                メンバー料金（円）
+                メンバー料金（円・税込）
               </label>
               <input
                 type="number"
@@ -193,7 +193,7 @@ export default function FairwayGuideAdminPage() {
 
             <div>
               <label className="block font-medium mb-2">
-                ビジター料金（円）
+                ビジター料金（円・税込）
               </label>
               <input
                 type="number"
