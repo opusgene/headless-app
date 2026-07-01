@@ -34,15 +34,18 @@ export default function FairwayGuideSignagePage() {
 
         // ダミー対応（API未実装でも表示できるようにする）
         if (!res.ok) {
-          const mock: FairwayGuide = {
-            courseName: "ダミーゴルフ場",
-            status: "ok",
-            freeMessage: "カート乗り入れは有料です。芝保護にご協力ください。",
-            memberPrice: 660,
-            visitorPrice: 880,
-          };
-          setData(mock);
-          return;
+          // const mock: FairwayGuide = {
+          //   courseName: "ダミーゴルフ場",
+          //   status: "ok",
+          //   freeMessage: "カート乗り入れは有料です。芝保護にご協力ください。",
+          //   memberPrice: 660,
+          //   visitorPrice: 880,
+          // };
+          // setData(mock);
+          // return;
+
+          throw new Error("データの取得に失敗しました");
+
         }
 
         const json = await res.json();
