@@ -45,7 +45,9 @@ export async function GET(
     return NextResponse.json(
       {
         message: "フェアウェイ利用案内が登録されていません。",
-        error: guideError,
+        golfCourse,
+        guide,
+        guideError,
       },
       { status: 404 }
     );
