@@ -15,7 +15,6 @@ type FairwayGuide = {
 };
 
 export default function FairwayGuideSignagePage() {
-  
   const params = useParams<{ code: string }>();
   const code = params?.code;
   console.log("code:", code);
@@ -28,6 +27,8 @@ export default function FairwayGuideSignagePage() {
 
   useEffect(() => {
     async function fetchData() {
+      console.log("fetch開始");
+
       try {
         setLoading(true);
 
@@ -46,7 +47,6 @@ export default function FairwayGuideSignagePage() {
           // return;
 
           throw new Error("データの取得に失敗しました");
-
         }
 
         const json = await res.json();
@@ -85,13 +85,9 @@ export default function FairwayGuideSignagePage() {
         isOk ? "bg-green-700" : "bg-red-700"
       }`}
     >
-      <div className="text-3xl font-bold mb-6">
-        本日のFW乗り入れ
-      </div>
+      <div className="text-3xl font-bold mb-6">本日のFW乗り入れ</div>
 
-      <div className="text-7xl font-extrabold mb-8">
-        {isOk ? "OK" : "NG"}
-      </div>
+      <div className="text-7xl font-extrabold mb-8">{isOk ? "OK" : "NG"}</div>
 
       <div className="text-xl whitespace-pre-wrap mb-10">
         {data.freeMessage}
