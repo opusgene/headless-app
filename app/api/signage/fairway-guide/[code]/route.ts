@@ -19,8 +19,6 @@ export async function GET(
       .single();
 
     if (golfCourseError || !golfCourse) {
-      console.error("Golf course not found:", golfCourseError);
-
       return NextResponse.json(
         { message: "ゴルフ場が見つかりません。" },
         { status: 404 }
@@ -41,8 +39,6 @@ export async function GET(
       .single();
 
     if (guideError || !guide) {
-      console.error("Fairway guide not found:", guideError);
-
       return NextResponse.json(
         { message: "フェアウェイ利用案内が登録されていません。" },
         { status: 404 }
@@ -59,7 +55,7 @@ export async function GET(
     });
 
   } catch (error) {
-    console.error("Unexpected error:", error);
+    console.error(error);
 
     return NextResponse.json(
       { message: "サーバーエラー" },
