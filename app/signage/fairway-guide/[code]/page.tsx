@@ -34,6 +34,9 @@ export default function FairwayGuideSignagePage() {
 
         const res = await fetch(apiUrl, { cache: "no-store" });
 
+        console.log("fetch完了");
+        console.log(res.status);
+
         // ダミー対応（API未実装でも表示できるようにする）
         if (!res.ok) {
           // const mock: FairwayGuide = {
