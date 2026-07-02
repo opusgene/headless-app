@@ -38,7 +38,6 @@ export async function GET(
         visitor_price,
         updated_at
       `)
-      .eq("golf_course_id", golfCourse.id);
 
     // 取得結果をそのまま返す
     return NextResponse.json({
