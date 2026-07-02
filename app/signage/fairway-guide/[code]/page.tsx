@@ -15,9 +15,10 @@ type FairwayGuide = {
 };
 
 export default function FairwayGuideSignagePage() {
+  
   const params = useParams<{ code: string }>();
   const code = params?.code;
-
+  console.log("code:", code);
   const [data, setData] = useState<FairwayGuide | null>(null);
   const [loading, setLoading] = useState(true);
 
