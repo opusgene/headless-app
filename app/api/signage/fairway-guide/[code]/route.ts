@@ -20,12 +20,15 @@ export async function GET(
 
     if (golfCourseError || !golfCourse) {
       return NextResponse.json(
-        { message: "ゴルフ場が見つかりません。" },
+        {
+          message: "ゴルフ場が見つかりません。",
+          golfCourseError,
+        },
         { status: 404 }
       );
     }
 
-    // フェアウェイ案内取得
+    // フェアウェイ案内取得（single()を外して切り分け）
     const { data: guide, error: guideError } = await supabase
       .from("fairway_guides")
       .select(`
@@ -35,35 +38,23 @@ export async function GET(
         visitor_price,
         updated_at
       `)
-      .eq("golf_course_id", golfCourse.id)
-      .single();
+      .eq("golf_course_id", golfCourse.id);
 
-      if (guideError || !guide) {
-        return NextResponse.json(
-          {
-            message: "フェアウェイ利用案内が登録されていません。",
-            guide,
-            guideError,
-            golfCourse,
-          },
-          { status: 404 }
-        );
-      }
-
+    // 取得結果をそのまま返す
     return NextResponse.json({
-      courseName: golfCourse.name,
-      status: guide.status,
-      freeMessage: guide.free_message,
-      memberPrice: guide.member_price,
-      visitorPrice: guide.visitor_price,
-      updatedAt: guide.updated_at,
+      golfCourse,
+      guide,
+      guideError,
     });
 
   } catch (error) {
     console.error(error);
 
     return NextResponse.json(
-      { message: "サーバーエラー" },
+      {
+        message: "サーバーエラー",
+        error,
+      },
       { status: 500 }
     );
   }
