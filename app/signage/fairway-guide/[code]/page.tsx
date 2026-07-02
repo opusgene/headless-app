@@ -17,7 +17,7 @@ type FairwayGuide = {
 export default function FairwayGuideSignagePage() {
   const params = useParams<{ code: string }>();
   const code = params?.code;
-  console.log("code:", code);
+
   const [data, setData] = useState<FairwayGuide | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -27,29 +27,15 @@ export default function FairwayGuideSignagePage() {
 
   useEffect(() => {
     async function fetchData() {
-      console.log("fetch開始");
-
       try {
         setLoading(true);
 
-        const res = await fetch(apiUrl, { cache: "no-store" });
+        const res = await fetch(apiUrl, {
+          cache: "no-store",
+        });
 
-        console.log("fetch完了");
-        console.log(res.status);
-
-        // ダミー対応（API未実装でも表示できるようにする）
         if (!res.ok) {
-          // const mock: FairwayGuide = {
-          //   courseName: "ダミーゴルフ場",
-          //   status: "ok",
-          //   freeMessage: "カート乗り入れは有料です。芝保護にご協力ください。",
-          //   memberPrice: 660,
-          //   visitorPrice: 880,
-          // };
-          // setData(mock);
-          // return;
-
-          throw new Error("データの取得に失敗しました");
+          throw new Error("データの取得に失敗しました。");
         }
 
         const json = await res.json();
@@ -62,14 +48,16 @@ export default function FairwayGuideSignagePage() {
           visitorPrice: json.visitorPrice,
           updatedAt: json.updatedAt,
         });
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.error("フェアウェイ利用案内取得エラー:", error);
       } finally {
         setLoading(false);
       }
     }
 
-    if (code) fetchData();
+    if (code) {
+      fetchData();
+    }
   }, [apiUrl, code]);
 
   if (loading || !data) {
@@ -88,9 +76,13 @@ export default function FairwayGuideSignagePage() {
         isOk ? "bg-green-700" : "bg-red-700"
       }`}
     >
-      <div className="text-3xl font-bold mb-6">本日のFW乗り入れ</div>
+      <div className="text-3xl font-bold mb-6">
+        本日のFW乗り入れ
+      </div>
 
-      <div className="text-7xl font-extrabold mb-8">{isOk ? "OK" : "NG"}</div>
+      <div className="text-7xl font-extrabold mb-8">
+        {isOk ? "OK" : "NG"}
+      </div>
 
       <div className="text-xl whitespace-pre-wrap mb-10">
         {data.freeMessage}
@@ -98,7 +90,9 @@ export default function FairwayGuideSignagePage() {
 
       {isOk && (
         <div className="text-lg space-y-2">
-          <div className="font-semibold">ご利用料金（お一人様）</div>
+          <div className="font-semibold">
+            ご利用料金（お一人様）
+          </div>
           <div>メンバー　{data.memberPrice}円（税込）</div>
           <div>ビジター　{data.visitorPrice}円（税込）</div>
         </div>
