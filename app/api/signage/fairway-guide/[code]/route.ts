@@ -27,23 +27,29 @@ export async function GET(
 
     // フェアウェイ案内取得
     const { data: guide, error: guideError } = await supabase
-      .from("fairway_guides")
-      .select(`
-        status,
-        free_message,
-        member_price,
-        visitor_price,
-        updated_at
-      `)
-      .eq("golf_course_id", golfCourse.id)
-      .single();
-
-    if (guideError || !guide) {
-      return NextResponse.json(
-        { message: "フェアウェイ利用案内が登録されていません。" },
-        { status: 404 }
-      );
-    }
+    .from("fairway_guides")
+    .select(`
+      status,
+      free_message,
+      member_price,
+      visitor_price,
+      updated_at
+    `)
+    .eq("golf_course_id", golfCourse.id)
+    .single();
+  
+  console.log("guide:", guide);
+  console.log("guideError:", guideError);
+  
+  if (guideError || !guide) {
+    return NextResponse.json(
+      {
+        message: "フェアウェイ利用案内が登録されていません。",
+        error: guideError,
+      },
+      { status: 404 }
+    );
+  }
 
     return NextResponse.json({
       courseName: golfCourse.name,
