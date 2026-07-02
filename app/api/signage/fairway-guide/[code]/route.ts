@@ -1,7 +1,7 @@
 // app/api/signage/fairway-guide/[code]/route.ts
 
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { supabasePublic } from "@/lib/supabase/public";
 
 export async function GET(
   request: Request,
@@ -9,8 +9,7 @@ export async function GET(
 ) {
   try {
     const { code } = await params;
-    const supabase = await createClient();
-
+    const supabase = supabasePublic;
     // ゴルフ場取得
     const { data: golfCourse, error: golfCourseError } = await supabase
       .from("golf_courses")
