@@ -9,50 +9,56 @@ export async function GET(
 ) {
   try {
     const { code } = await params;
-    const supabase = supabasePublic;
+
     // ゴルフ場取得
-    const { data: golfCourse, error: golfCourseError } = await supabase
-      .from("golf_courses")
-      .select("id, name")
-      .eq("code", code)
-      .single();
+    const { data: golfCourse, error: golfCourseError } =
+      await supabasePublic
+        .from("golf_courses")
+        .select("id, name")
+        .eq("code", code)
+        .single();
 
     if (golfCourseError || !golfCourse) {
       return NextResponse.json(
-        {
-          message: "ゴルフ場が見つかりません。",
-          golfCourseError,
-        },
+        { message: "ゴルフ場が見つかりません。" },
         { status: 404 }
       );
     }
 
-    // フェアウェイ案内取得（single()を外して切り分け）
-    const { data: guide, error: guideError } = await supabase
-      .from("fairway_guides")
-      .select(`
-        status,
-        free_message,
-        member_price,
-        visitor_price,
-        updated_at
-      `)
+    // フェアウェイ利用案内取得
+    const { data: guide, error: guideError } =
+      await supabasePublic
+        .from("fairway_guides")
+        .select(`
+          status,
+          free_message,
+          member_price,
+          visitor_price,
+          updated_at
+        `)
+        .eq("golf_course_id", golfCourse.id)
+        .single();
 
-    // 取得結果をそのまま返す
+    if (guideError || !guide) {
+      return NextResponse.json(
+        { message: "フェアウェイ利用案内が登録されていません。" },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json({
-      golfCourse,
-      guide,
-      guideError,
+      courseName: golfCourse.name,
+      status: guide.status,
+      freeMessage: guide.free_message,
+      memberPrice: guide.member_price,
+      visitorPrice: guide.visitor_price,
+      updatedAt: guide.updated_at,
     });
-
   } catch (error) {
-    console.error(error);
+    console.error("Fairway Guide API Error:", error);
 
     return NextResponse.json(
-      {
-        message: "サーバーエラー",
-        error,
-      },
+      { message: "サーバーエラーが発生しました。" },
       { status: 500 }
     );
   }
