@@ -38,12 +38,17 @@ export async function GET(
       .eq("golf_course_id", golfCourse.id)
       .single();
 
-    if (guideError || !guide) {
-      return NextResponse.json(
-        { message: "フェアウェイ利用案内が登録されていません。" },
-        { status: 404 }
-      );
-    }
+      if (guideError || !guide) {
+        return NextResponse.json(
+          {
+            message: "フェアウェイ利用案内が登録されていません。",
+            guide,
+            guideError,
+            golfCourse,
+          },
+          { status: 404 }
+        );
+      }
 
     return NextResponse.json({
       courseName: golfCourse.name,
