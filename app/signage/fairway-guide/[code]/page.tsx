@@ -1,74 +1,48 @@
-"use client";
+// app/signage/fairway-guide/[code]/page.tsx
 
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import { notFound } from "next/navigation";
+import { supabasePublic } from "@/lib/supabase/public";
 
 type FairwayStatus = "ok" | "ng";
 
-type FairwayGuide = {
-  courseName: string;
-  status: FairwayStatus;
-  freeMessage: string;
-  memberPrice?: number;
-  visitorPrice?: number;
-  updatedAt?: string;
-};
+export default async function FairwayGuideSignagePage({
+  params,
+}: {
+  params: Promise<{ code: string }>;
+}) {
+  const { code } = await params;
 
-export default function FairwayGuideSignagePage() {
-  const params = useParams<{ code: string }>();
-  const code = params?.code;
+  // ゴルフ場取得
+  const { data: golfCourse, error: golfCourseError } =
+    await supabasePublic
+      .from("golf_courses")
+      .select("id, name")
+      .eq("code", code)
+      .single();
 
-  const [data, setData] = useState<FairwayGuide | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const apiUrl = useMemo(() => {
-    return `/api/signage/fairway-guide/${code}`;
-  }, [code]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-
-        const res = await fetch(apiUrl, {
-          cache: "no-store",
-        });
-
-        if (!res.ok) {
-          throw new Error("データの取得に失敗しました。");
-        }
-
-        const json = await res.json();
-
-        setData({
-          courseName: json.courseName ?? "ゴルフ場",
-          status: json.status,
-          freeMessage: json.freeMessage,
-          memberPrice: json.memberPrice,
-          visitorPrice: json.visitorPrice,
-          updatedAt: json.updatedAt,
-        });
-      } catch (error) {
-        console.error("フェアウェイ利用案内取得エラー:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    if (code) {
-      fetchData();
-    }
-  }, [apiUrl, code]);
-
-  if (loading || !data) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-black text-white">
-        読み込み中...
-      </div>
-    );
+  if (golfCourseError || !golfCourse) {
+    notFound();
   }
 
-  const isOk = data.status === "ok";
+  // フェアウェイ利用案内取得
+  const { data: guide, error: guideError } =
+    await supabasePublic
+      .from("fairway_guides")
+      .select(`
+        status,
+        free_message,
+        member_price,
+        visitor_price,
+        updated_at
+      `)
+      .eq("golf_course_id", golfCourse.id)
+      .single();
+
+  if (guideError || !guide) {
+    notFound();
+  }
+
+  const isOk = guide.status === "ok";
 
   return (
     <div
@@ -85,7 +59,7 @@ export default function FairwayGuideSignagePage() {
       </div>
 
       <div className="text-xl whitespace-pre-wrap mb-10">
-        {data.freeMessage}
+        {guide.free_message}
       </div>
 
       {isOk && (
@@ -93,14 +67,19 @@ export default function FairwayGuideSignagePage() {
           <div className="font-semibold">
             ご利用料金（お一人様）
           </div>
-          <div>メンバー　{data.memberPrice}円（税込）</div>
-          <div>ビジター　{data.visitorPrice}円（税込）</div>
+          <div>
+            メンバー　{guide.member_price}円（税込）
+          </div>
+          <div>
+            ビジター　{guide.visitor_price}円（税込）
+          </div>
         </div>
       )}
 
-      {data.updatedAt && (
+      {guide.updated_at && (
         <div className="absolute bottom-4 text-xs opacity-70">
-          更新: {new Date(data.updatedAt).toLocaleString()}
+          更新：
+          {new Date(guide.updated_at).toLocaleString("ja-JP")}
         </div>
       )}
     </div>
