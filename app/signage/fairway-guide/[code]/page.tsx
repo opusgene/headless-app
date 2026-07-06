@@ -31,8 +31,13 @@ export default async function FairwayGuideSignagePage({
       .select(`
         status,
         free_message,
-        member_price,
-        visitor_price,
+        show_price_table,
+        member_label,
+        visitor_label,
+        member_price_weekday,
+        member_price_holiday,
+        visitor_price_weekday,
+        visitor_price_holiday,
         updated_at
       `)
       .eq("golf_course_id", golfCourse.id)
@@ -50,32 +55,67 @@ export default async function FairwayGuideSignagePage({
         isOk ? "bg-green-700" : "bg-red-700"
       }`}
     >
+      {/* タイトル */}
       <div className="text-3xl font-bold mb-6">
         本日のFW乗り入れ
       </div>
 
+      {/* OK / NG */}
       <div className="text-7xl font-extrabold mb-8">
         {isOk ? "OK" : "NG"}
       </div>
 
+      {/* 自由メッセージ */}
       <div className="text-xl whitespace-pre-wrap mb-10">
         {guide.free_message}
       </div>
 
-      {isOk && (
-        <div className="text-lg space-y-2">
-          <div className="font-semibold">
+      {/* 料金表 */}
+      {isOk && guide.show_price_table && (
+        <div className="text-lg">
+          <div className="font-semibold mb-3">
             ご利用料金（お一人様）
           </div>
-          <div>
-            メンバー　{guide.member_price}円（税込）
-          </div>
-          <div>
-            ビジター　{guide.visitor_price}円（税込）
-          </div>
+
+          <table className="border-collapse mx-auto">
+            <thead>
+              <tr>
+                <th className="px-6 py-2"></th>
+                <th className="px-6 py-2">平日</th>
+                <th className="px-6 py-2">土日祝</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td className="px-6 py-2 text-left">
+                  {guide.member_label}
+                </td>
+                <td className="px-6 py-2">
+                  {guide.member_price_weekday}円（税込）
+                </td>
+                <td className="px-6 py-2">
+                  {guide.member_price_holiday}円（税込）
+                </td>
+              </tr>
+
+              <tr>
+                <td className="px-6 py-2 text-left">
+                  {guide.visitor_label}
+                </td>
+                <td className="px-6 py-2">
+                  {guide.visitor_price_weekday}円（税込）
+                </td>
+                <td className="px-6 py-2">
+                  {guide.visitor_price_holiday}円（税込）
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       )}
 
+      {/* 更新日時 */}
       {guide.updated_at && (
         <div className="absolute bottom-4 text-xs opacity-70">
           更新：
