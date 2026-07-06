@@ -8,8 +8,18 @@ type FairwayStatus = "ok" | "ng";
 type FairwayGuideState = {
   status: FairwayStatus;
   freeMessage: string;
-  memberPrice: number;
-  visitorPrice: number;
+
+  showPriceTable: boolean;
+
+  memberLabel: string;
+  visitorLabel: string;
+
+  memberPriceWeekday: number;
+  memberPriceHoliday: number;
+
+  visitorPriceWeekday: number;
+  visitorPriceHoliday: number;
+
   updatedAt?: string;
 };
 
@@ -23,8 +33,17 @@ export default function FairwayGuideAdminPage() {
   const [state, setState] = useState<FairwayGuideState>({
     status: "ok",
     freeMessage: "",
-    memberPrice: 660,
-    visitorPrice: 880,
+
+    showPriceTable: true,
+
+    memberLabel: "メンバー",
+    visitorLabel: "ビジター",
+
+    memberPriceWeekday: 660,
+    memberPriceHoliday: 660,
+
+    visitorPriceWeekday: 880,
+    visitorPriceHoliday: 880,
   });
 
   const apiUrl = useMemo(() => {
@@ -40,7 +59,10 @@ export default function FairwayGuideAdminPage() {
       try {
         setLoading(true);
 
-        const res = await fetch(apiUrl, { cache: "no-store" });
+        const res = await fetch(apiUrl, {
+          cache: "no-store",
+        });
+
         if (!res.ok) throw new Error("failed to fetch");
 
         const data = await res.json();
@@ -48,8 +70,18 @@ export default function FairwayGuideAdminPage() {
         setState({
           status: data.status ?? "ok",
           freeMessage: data.freeMessage ?? "",
-          memberPrice: data.memberPrice ?? 660,
-          visitorPrice: data.visitorPrice ?? 880,
+
+          showPriceTable: data.showPriceTable ?? true,
+
+          memberLabel: data.memberLabel ?? "メンバー",
+          visitorLabel: data.visitorLabel ?? "ビジター",
+
+          memberPriceWeekday: data.memberPriceWeekday ?? 660,
+          memberPriceHoliday: data.memberPriceHoliday ?? 660,
+
+          visitorPriceWeekday: data.visitorPriceWeekday ?? 880,
+          visitorPriceHoliday: data.visitorPriceHoliday ?? 880,
+
           updatedAt: data.updatedAt,
         });
       } catch (e) {
@@ -59,7 +91,9 @@ export default function FairwayGuideAdminPage() {
       }
     }
 
-    if (golfCourseSlug) fetchData();
+    if (golfCourseSlug) {
+      fetchData();
+    }
   }, [apiUrl, golfCourseSlug]);
 
   const onSave = async () => {
@@ -74,7 +108,9 @@ export default function FairwayGuideAdminPage() {
         body: JSON.stringify(state),
       });
 
-      if (!res.ok) throw new Error("save failed");
+      if (!res.ok) {
+        throw new Error("save failed");
+      }
 
       const data = await res.json();
 
@@ -110,12 +146,15 @@ export default function FairwayGuideAdminPage() {
         <h1 className="text-2xl font-bold">
           フェアウェイ利用案内
         </h1>
+
         <p className="text-sm text-gray-500">
           slug: {golfCourseSlug}
         </p>
+
         {state.updatedAt && (
           <p className="text-xs text-gray-400">
-            最終更新: {new Date(state.updatedAt).toLocaleString()}
+            最終更新：
+            {new Date(state.updatedAt).toLocaleString()}
           </p>
         )}
       </div>
@@ -129,18 +168,25 @@ export default function FairwayGuideAdminPage() {
         </button>
       </div>
 
-      <div className="space-y-4 border rounded-lg p-4">
+      <div className="space-y-6 border rounded-lg p-6">
+
         <div>
           <label className="block font-medium mb-2">
             乗り入れ状態
           </label>
-          <div className="flex gap-4">
+
+          <div className="flex gap-6">
+
             <label>
               <input
                 type="radio"
+                name="status"
                 checked={state.status === "ok"}
                 onChange={() =>
-                  setState((s) => ({ ...s, status: "ok" }))
+                  setState((s) => ({
+                    ...s,
+                    status: "ok",
+                  }))
                 }
               />
               <span className="ml-2">OK</span>
@@ -149,13 +195,18 @@ export default function FairwayGuideAdminPage() {
             <label>
               <input
                 type="radio"
+                name="status"
                 checked={state.status === "ng"}
                 onChange={() =>
-                  setState((s) => ({ ...s, status: "ng" }))
+                  setState((s) => ({
+                    ...s,
+                    status: "ng",
+                  }))
                 }
               />
               <span className="ml-2">NG</span>
             </label>
+
           </div>
         </div>
 
@@ -163,59 +214,173 @@ export default function FairwayGuideAdminPage() {
           <label className="block font-medium mb-2">
             自由テキスト
           </label>
+
           <textarea
             className="w-full border rounded p-2 min-h-[120px]"
             value={state.freeMessage}
             onChange={(e) =>
-              setState((s) => ({ ...s, freeMessage: e.target.value }))
+              setState((s) => ({
+                ...s,
+                freeMessage: e.target.value,
+              }))
             }
           />
         </div>
 
         {state.status === "ok" && (
-          <div className="space-y-3">
-            <div>
-              <label className="block font-medium mb-2">
-                メンバー料金（円・税込）
-              </label>
+          <>
+            <label className="flex items-center gap-2">
               <input
-                type="number"
-                className="w-full border rounded p-2"
-                value={state.memberPrice}
+                type="checkbox"
+                checked={state.showPriceTable}
                 onChange={(e) =>
                   setState((s) => ({
                     ...s,
-                    memberPrice: Number(e.target.value),
+                    showPriceTable: e.target.checked,
                   }))
                 }
               />
-            </div>
 
-            <div>
-              <label className="block font-medium mb-2">
-                ビジター料金（円・税込）
-              </label>
-              <input
-                type="number"
-                className="w-full border rounded p-2"
-                value={state.visitorPrice}
-                onChange={(e) =>
-                  setState((s) => ({
-                    ...s,
-                    visitorPrice: Number(e.target.value),
-                  }))
-                }
-              />
-            </div>
-          </div>
+              料金表を表示する
+            </label>
+
+            {state.showPriceTable && (
+              <div className="space-y-6">
+
+                <div className="grid grid-cols-2 gap-4">
+
+                  <div>
+                    <label className="block font-medium mb-2">
+                      メンバー名称
+                    </label>
+
+                    <input
+                      className="w-full border rounded p-2"
+                      value={state.memberLabel}
+                      onChange={(e) =>
+                        setState((s) => ({
+                          ...s,
+                          memberLabel: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium mb-2">
+                      ビジター名称
+                    </label>
+
+                    <input
+                      className="w-full border rounded p-2"
+                      value={state.visitorLabel}
+                      onChange={(e) =>
+                        setState((s) => ({
+                          ...s,
+                          visitorLabel: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+
+                </div>
+
+                <table className="w-full border-collapse">
+
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>平日</th>
+                      <th>土日祝</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+
+                    <tr>
+
+                      <td>{state.memberLabel}</td>
+
+                      <td>
+                        <input
+                          type="number"
+                          className="w-full border rounded p-2"
+                          value={state.memberPriceWeekday}
+                          onChange={(e) =>
+                            setState((s) => ({
+                              ...s,
+                              memberPriceWeekday: Number(e.target.value),
+                            }))
+                          }
+                        />
+                      </td>
+
+                      <td>
+                        <input
+                          type="number"
+                          className="w-full border rounded p-2"
+                          value={state.memberPriceHoliday}
+                          onChange={(e) =>
+                            setState((s) => ({
+                              ...s,
+                              memberPriceHoliday: Number(e.target.value),
+                            }))
+                          }
+                        />
+                      </td>
+
+                    </tr>
+
+                    <tr>
+
+                      <td>{state.visitorLabel}</td>
+
+                      <td>
+                        <input
+                          type="number"
+                          className="w-full border rounded p-2"
+                          value={state.visitorPriceWeekday}
+                          onChange={(e) =>
+                            setState((s) => ({
+                              ...s,
+                              visitorPriceWeekday: Number(e.target.value),
+                            }))
+                          }
+                        />
+                      </td>
+
+                      <td>
+                        <input
+                          type="number"
+                          className="w-full border rounded p-2"
+                          value={state.visitorPriceHoliday}
+                          onChange={(e) =>
+                            setState((s) => ({
+                              ...s,
+                              visitorPriceHoliday: Number(e.target.value),
+                            }))
+                          }
+                        />
+                      </td>
+
+                    </tr>
+
+                  </tbody>
+
+                </table>
+
+              </div>
+            )}
+          </>
         )}
+
       </div>
 
-      <div className="flex justify-end gap-3">
+      <div className="flex justify-end">
         <button
           onClick={onSave}
           disabled={saving}
-          className="px-4 py-2 bg-black text-white rounded disabled:opacity-50"
+          className="px-5 py-2 bg-black text-white rounded disabled:opacity-50"
         >
           {saving ? "保存中..." : "保存"}
         </button>
