@@ -108,15 +108,18 @@ export default function FairwayGuideAdminPage() {
         body: JSON.stringify(state),
       });
 
-      if (!res.ok) {
-        throw new Error("save failed");
-      }
+      const json = await res.json();
 
-      const data = await res.json();
+      console.log(json);
+
+      if (!res.ok) {
+        alert(JSON.stringify(json, null, 2));
+        return;
+      }
 
       setState((prev) => ({
         ...prev,
-        updatedAt: data.updatedAt,
+        updatedAt: json.updatedAt,
       }));
 
       alert("保存しました");
@@ -133,23 +136,15 @@ export default function FairwayGuideAdminPage() {
   };
 
   if (loading) {
-    return (
-      <div className="p-6 text-gray-500">
-        読み込み中...
-      </div>
-    );
+    return <div className="p-6 text-gray-500">読み込み中...</div>;
   }
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">
-          フェアウェイ利用案内
-        </h1>
+        <h1 className="text-2xl font-bold">フェアウェイ利用案内</h1>
 
-        <p className="text-sm text-gray-500">
-          slug: {golfCourseSlug}
-        </p>
+        <p className="text-sm text-gray-500">slug: {golfCourseSlug}</p>
 
         {state.updatedAt && (
           <p className="text-xs text-gray-400">
@@ -169,14 +164,10 @@ export default function FairwayGuideAdminPage() {
       </div>
 
       <div className="space-y-6 border rounded-lg p-6">
-
         <div>
-          <label className="block font-medium mb-2">
-            乗り入れ状態
-          </label>
+          <label className="block font-medium mb-2">乗り入れ状態</label>
 
           <div className="flex gap-6">
-
             <label>
               <input
                 type="radio"
@@ -206,14 +197,11 @@ export default function FairwayGuideAdminPage() {
               />
               <span className="ml-2">NG</span>
             </label>
-
           </div>
         </div>
 
         <div>
-          <label className="block font-medium mb-2">
-            自由テキスト
-          </label>
+          <label className="block font-medium mb-2">自由テキスト</label>
 
           <textarea
             className="w-full border rounded p-2 min-h-[120px]"
@@ -240,15 +228,12 @@ export default function FairwayGuideAdminPage() {
                   }))
                 }
               />
-
               料金表を表示する
             </label>
 
             {state.showPriceTable && (
               <div className="space-y-6">
-
                 <div className="grid grid-cols-2 gap-4">
-
                   <div>
                     <label className="block font-medium mb-2">
                       メンバー名称
@@ -282,11 +267,9 @@ export default function FairwayGuideAdminPage() {
                       }
                     />
                   </div>
-
                 </div>
 
                 <table className="w-full border-collapse">
-
                   <thead>
                     <tr>
                       <th></th>
@@ -296,9 +279,7 @@ export default function FairwayGuideAdminPage() {
                   </thead>
 
                   <tbody>
-
                     <tr>
-
                       <td>{state.memberLabel}</td>
 
                       <td>
@@ -328,11 +309,9 @@ export default function FairwayGuideAdminPage() {
                           }
                         />
                       </td>
-
                     </tr>
 
                     <tr>
-
                       <td>{state.visitorLabel}</td>
 
                       <td>
@@ -362,18 +341,13 @@ export default function FairwayGuideAdminPage() {
                           }
                         />
                       </td>
-
                     </tr>
-
                   </tbody>
-
                 </table>
-
               </div>
             )}
           </>
         )}
-
       </div>
 
       <div className="flex justify-end">
