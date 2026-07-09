@@ -171,7 +171,7 @@
  .info_horizontal__wrapper .fw-entry__header,
  .info_horizontal__wrapper .fw-entry__footer {
    background-image: url("../images/common/fw-entry-line.png");
-   background-size: cover;
+   /* background-size: cover; */
    background-position: center;
    background-repeat: no-repeat;
    height: 75px;
