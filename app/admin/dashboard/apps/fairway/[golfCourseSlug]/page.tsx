@@ -7,7 +7,8 @@ type FairwayStatus = "ok" | "ng";
 
 type FairwayGuideState = {
   status: FairwayStatus;
-  freeMessage: string;
+  okMessage: string;
+  ngMessage: string;
 
   showPriceTable: boolean;
 
@@ -32,7 +33,8 @@ export default function FairwayGuideAdminPage() {
 
   const [state, setState] = useState<FairwayGuideState>({
     status: "ok",
-    freeMessage: "",
+    okMessage: "",
+    ngMessage: "",
 
     showPriceTable: true,
 
@@ -69,7 +71,8 @@ export default function FairwayGuideAdminPage() {
 
         setState({
           status: data.status ?? "ok",
-          freeMessage: data.freeMessage ?? "",
+          okMessage: data.okMessage ?? "",
+          ngMessage: data.ngMessage ?? "",
 
           showPriceTable: data.showPriceTable ?? true,
 
@@ -201,15 +204,30 @@ export default function FairwayGuideAdminPage() {
         </div>
 
         <div>
-          <label className="block font-medium mb-2">自由テキスト</label>
+          <label className="block font-medium mb-2">OK時メッセージ</label>
 
           <textarea
             className="w-full border rounded p-2 min-h-[120px]"
-            value={state.freeMessage}
+            value={state.okMessage}
             onChange={(e) =>
               setState((s) => ({
                 ...s,
-                freeMessage: e.target.value,
+                okMessage: e.target.value,
+              }))
+            }
+          />
+        </div>
+
+        <div>
+          <label className="block font-medium mb-2">NG時メッセージ</label>
+
+          <textarea
+            className="w-full border rounded p-2 min-h-[120px]"
+            value={state.ngMessage}
+            onChange={(e) =>
+              setState((s) => ({
+                ...s,
+                ngMessage: e.target.value,
               }))
             }
           />

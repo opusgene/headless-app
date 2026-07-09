@@ -13,35 +13,34 @@ export default async function FairwayGuideSignagePage({
   const { code } = await params;
 
   // ゴルフ場取得
-  const { data: golfCourse, error: golfCourseError } =
-    await supabasePublic
-      .from("golf_courses")
-      .select("id, name")
-      .eq("code", code)
-      .single();
+  const { data: golfCourse, error: golfCourseError } = await supabasePublic
+    .from("golf_courses")
+    .select("id, name")
+    .eq("code", code)
+    .single();
 
   if (golfCourseError || !golfCourse) {
     notFound();
   }
 
   // フェアウェイ利用案内取得
-  const { data: guide, error: guideError } =
-    await supabasePublic
-      .from("fairway_guides")
-      .select(`
-        status,
-        free_message,
-        show_price_table,
-        member_label,
-        visitor_label,
-        member_price_weekday,
-        member_price_holiday,
-        visitor_price_weekday,
-        visitor_price_holiday,
-        updated_at
-      `)
-      .eq("golf_course_id", golfCourse.id)
-      .single();
+  const { data: guide, error: guideError } = await supabasePublic
+    .from("fairway_guides")
+    .select(`
+      status,
+      ok_message,
+      ng_message,
+      show_price_table,
+      member_label,
+      visitor_label,
+      member_price_weekday,
+      member_price_holiday,
+      visitor_price_weekday,
+      visitor_price_holiday,
+      updated_at
+    `)
+    .eq("golf_course_id", golfCourse.id)
+    .single();
 
   if (guideError || !guide) {
     notFound();
@@ -65,9 +64,11 @@ export default async function FairwayGuideSignagePage({
         {isOk ? "OK" : "NG"}
       </div>
 
-      {/* 自由メッセージ */}
+      {/* メッセージ */}
       <div className="text-xl whitespace-pre-wrap mb-10">
-        {guide.free_message}
+        {isOk
+          ? (guide.ok_message ?? "")
+          : (guide.ng_message ?? "")}
       </div>
 
       {/* 料金表 */}
@@ -89,25 +90,25 @@ export default async function FairwayGuideSignagePage({
             <tbody>
               <tr>
                 <td className="px-6 py-2 text-left">
-                  {guide.member_label}
+                  {guide.member_label ?? "メンバー"}
                 </td>
                 <td className="px-6 py-2">
-                  {guide.member_price_weekday}円（税込）
+                  {guide.member_price_weekday ?? 0}円（税込）
                 </td>
                 <td className="px-6 py-2">
-                  {guide.member_price_holiday}円（税込）
+                  {guide.member_price_holiday ?? 0}円（税込）
                 </td>
               </tr>
 
               <tr>
                 <td className="px-6 py-2 text-left">
-                  {guide.visitor_label}
+                  {guide.visitor_label ?? "ビジター"}
                 </td>
                 <td className="px-6 py-2">
-                  {guide.visitor_price_weekday}円（税込）
+                  {guide.visitor_price_weekday ?? 0}円（税込）
                 </td>
                 <td className="px-6 py-2">
-                  {guide.visitor_price_holiday}円（税込）
+                  {guide.visitor_price_holiday ?? 0}円（税込）
                 </td>
               </tr>
             </tbody>

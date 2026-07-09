@@ -32,7 +32,8 @@ export async function GET(
         .from("fairway_guides")
         .select(`
           status,
-          free_message,
+          ok_message,
+          ng_message,
           show_price_table,
           member_label,
           visitor_label,
@@ -54,7 +55,8 @@ export async function GET(
 
     return NextResponse.json({
       status: guide.status,
-      freeMessage: guide.free_message,
+      okMessage: guide.ok_message,
+      ngMessage: guide.ng_message,
       showPriceTable: guide.show_price_table,
       memberLabel: guide.member_label,
       visitorLabel: guide.visitor_label,
@@ -106,8 +108,9 @@ export async function POST(
           golf_course_id: golfCourse.id,
 
           status: body.status,
-          free_message: body.freeMessage,
-
+          ok_message: body.okMessage,
+          ng_message: body.ngMessage,
+          
           show_price_table: body.showPriceTable,
 
           member_label: body.memberLabel,
