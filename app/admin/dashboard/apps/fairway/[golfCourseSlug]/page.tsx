@@ -203,35 +203,39 @@ export default function FairwayGuideAdminPage() {
           </div>
         </div>
 
-        <div>
-          <label className="block font-medium mb-2">OK時メッセージ</label>
+        {state.status === "ok" && (
+          <div>
+            <label className="block font-medium mb-2">OK時メッセージ</label>
 
-          <textarea
-            className="w-full border rounded p-2 min-h-[120px]"
-            value={state.okMessage}
-            onChange={(e) =>
-              setState((s) => ({
-                ...s,
-                okMessage: e.target.value,
-              }))
-            }
-          />
-        </div>
+            <textarea
+              className="w-full border rounded p-2 min-h-[120px]"
+              value={state.okMessage}
+              onChange={(e) =>
+                setState((s) => ({
+                  ...s,
+                  okMessage: e.target.value,
+                }))
+              }
+            />
+          </div>
+        )}
 
-        <div>
-          <label className="block font-medium mb-2">NG時メッセージ</label>
+        {state.status === "ng" && (
+          <div>
+            <label className="block font-medium mb-2">NG時メッセージ</label>
 
-          <textarea
-            className="w-full border rounded p-2 min-h-[120px]"
-            value={state.ngMessage}
-            onChange={(e) =>
-              setState((s) => ({
-                ...s,
-                ngMessage: e.target.value,
-              }))
-            }
-          />
-        </div>
+            <textarea
+              className="w-full border rounded p-2 min-h-[120px]"
+              value={state.ngMessage}
+              onChange={(e) =>
+                setState((s) => ({
+                  ...s,
+                  ngMessage: e.target.value,
+                }))
+              }
+            />
+          </div>
+        )}
 
         {state.status === "ok" && (
           <>
