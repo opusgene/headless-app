@@ -117,12 +117,12 @@ export default async function FairwayGuideSignagePage({
       )}
 
       {/* 更新日時 */}
-      {guide.updated_at && (
+      {/* {guide.updated_at && (
         <div className="absolute bottom-4 text-xs opacity-70">
           更新：
           {new Date(guide.updated_at).toLocaleString("ja-JP")}
         </div>
-      )}
+      )} */}
     </div>
   );
 }
