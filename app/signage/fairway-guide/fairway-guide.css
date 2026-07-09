@@ -163,35 +163,3 @@
    height: auto;
    aspect-ratio: 856/350;
  }
- 
- /* ===========================
-  * FW乗り入れ（ヨコ） page-fw-yoko.php
-  * =========================== */
- 
- .info_horizontal__wrapper .fw-entry__header,
- .info_horizontal__wrapper .fw-entry__footer {
-   background-image: url("../images/common/fw-entry-line.png");
-   background-position: center;
-   background-repeat: no-repeat;
-   height: 75px;
-   width: 100%;
-   aspect-ratio: 1080/75;
- }
- 
- .info_horizontal__wrapper .fw-entry__heading {
-   font-size: 70px;
- }
- 
- .info_horizontal__wrapper .fw-entry__status {
-   width: 520px;
-   height: 400px;
- }
- 
- .info_horizontal__wrapper .fw-entry {
-   padding-top: 25px;
- }
- 
- .info_horizontal__wrapper .fw-entry__notice {
-   font-size: 40px;
-   margin-top: 40px;
- } 
