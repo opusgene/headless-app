@@ -2,6 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { supabasePublic } from "@/lib/supabase/public";
+import "../fairway-guide.css";
 
 type FairwayStatus = "ok" | "ng";
 
