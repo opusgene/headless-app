@@ -2,6 +2,7 @@
 
 import { NextResponse } from "next/server";
 import { supabasePublic } from "@/lib/supabase/public";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function GET(
   request: Request,
@@ -98,8 +99,8 @@ export async function POST(
       );
     }
 
-    const { data, error } = await supabasePublic
-      .from("fairway_guides")
+    const { data, error } = await supabaseAdmin
+    .from("fairway_guides")
       .upsert(
         {
           golf_course_id: golfCourse.id,
