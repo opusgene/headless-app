@@ -139,7 +139,11 @@ export default async function FairwayGuideSignagePage({
               !isOk ? "fw-entry__status-text--ng" : ""
             }`}
           >
-            {isOk ? "OK" : "NG"}
+            {isOk ? (
+              <img src="/images/common/fw-entry-ok.png" alt="OK" />
+            ) : (
+              "NG"
+            )}
           </div>
         </div>
 
