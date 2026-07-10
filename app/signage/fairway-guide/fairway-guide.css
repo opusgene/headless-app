@@ -73,6 +73,7 @@
   letter-spacing: 0;
   line-height: 1.2;
   text-align: center;
+  white-space: pre-wrap;
 }
 
 .fw-entry__price-box {
