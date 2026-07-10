@@ -146,6 +146,45 @@ export default async function FairwayGuideSignagePage({
         <div className="fw-entry__notice">
           {isOk ? guide.ok_message ?? "" : guide.ng_message ?? ""}
         </div>
+
+        {isOk && guide.show_price_table && (
+          <div className="fw-entry__price-box">
+            <div className="fw-entry__price-heading">
+              ご利用料金
+              <span className="fw-entry__heading-note">（お一人様）</span>
+            </div>
+
+            <div className="fw-entry__price-list">
+              <div className="fw-entry__price-item">
+                <div className="fw-entry__price-label">
+                  {guide.member_label ?? "メンバー"}
+                </div>
+
+                <div className="fw-entry__price-value">
+                  平日 {guide.member_price_weekday ?? 0}円（税込）
+                </div>
+
+                <div className="fw-entry__price-value">
+                  土日祝 {guide.member_price_holiday ?? 0}円（税込）
+                </div>
+              </div>
+
+              <div className="fw-entry__price-item">
+                <div className="fw-entry__price-label">
+                  {guide.visitor_label ?? "ビジター"}
+                </div>
+
+                <div className="fw-entry__price-value">
+                  平日 {guide.visitor_price_weekday ?? 0}円（税込）
+                </div>
+
+                <div className="fw-entry__price-value">
+                  土日祝 {guide.visitor_price_holiday ?? 0}円（税込）
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
