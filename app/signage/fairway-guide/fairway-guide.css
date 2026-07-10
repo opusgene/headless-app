@@ -132,6 +132,8 @@
 }
 
 .fw-entry__price-value {
+  display: flex;
+  justify-content: end;
   width: 425px;
   text-align: right;
   margin-left: 0;
