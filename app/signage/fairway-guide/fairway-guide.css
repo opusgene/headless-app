@@ -2,199 +2,199 @@
  * FW乗り入れ page-fw.php
  * =========================== */
 
- .fw-entry__header,
- .fw-entry__footer {
-   /* background-image: url("../images/common/fw-entry-line.png"); */
-   background-size: cover;
-   background-position: center;
-   background-repeat: no-repeat;
-   height: 145px;
-   width: 100%;
-   aspect-ratio: 1080/145;
- }
- 
- .fw-entry {
-   background-color: #ffffff;
-   height: calc(100vh - 290px);
-   padding-top: 50px;
- }
- 
- .fw-entry__inner.inner {
-   max-width: 1000px;
-   margin: 0 auto;
- }
- 
- .fw-entry__heading {
-   font-size: 104px;
-   font-weight: 700;
-   color: #000000;
-   letter-spacing: 0;
-   line-height: 1.4;
-   text-align: center;
- }
- 
- .fw-entry__status {
-   margin-top: 4px;
-   background-color: #006934;
-   text-align: center;
-   width: 730px;
-   height: 545px;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   margin-left: auto;
-   margin-right: auto;
- }
- 
- .fw-entry__status-text {
-   font-size: 500px;
-   font-weight: 700;
-   color: #fff800;
-   letter-spacing: -0.025em;
-   line-height: 1;
-   margin-top: 0px;
- }
- 
- .fw-entry__status.fw-entry__status--ng {
-   margin-top: 4px;
-   background-color: #dd051f;
- }
- 
- .fw-entry__status-text.fw-entry__status-text--ng {
-   color: #ffffff;
-   margin-top: -40px;
- }
- 
- .fw-entry__notice {
-   margin-top: 100px;
-   font-size: 65px;
-   font-weight: 700;
-   color: #000000;
-   letter-spacing: 0;
-   line-height: 1.2;
-   text-align: center;
- }
- 
- .fw-entry__price-box {
-   margin-top: 60px;
-   border-top: 5px solid #006934;
-   border-bottom: 5px solid #006934;
-   width: 900px;
-   margin-left: auto;
-   margin-right: auto;
- }
- 
- .fw-entry__price-heading {
-   font-size: 65px;
-   font-weight: 700;
-   color: #006934;
-   letter-spacing: 0;
-   line-height: 1.5;
-   text-align: center;
-   border-bottom: 5px solid #006934;
- }
- 
- .fw-entry__heading-note {
-   font-size: 37px;
-   font-weight: 600;
-   color: #006934;
-   letter-spacing: 0;
-   line-height: 1.5;
-   display: inline-block;
-   margin-left: -30px;
-   white-space: nowrap;
- }
- 
- .fw-entry__price-list {
-   display: flex;
-   flex-direction: column;
-   gap: 16px;
- }
- 
- .fw-entry__price-item {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   gap: 50px;
-   /* width: fit-content;
+.fw-entry__header,
+.fw-entry__footer {
+  background-image: url("/images/common/fw-entry-line.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 145px;
+  width: 100%;
+  aspect-ratio: 1080/145;
+}
+
+.fw-entry {
+  background-color: #ffffff;
+  height: calc(100vh - 290px);
+  padding-top: 50px;
+}
+
+.fw-entry__inner.inner {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.fw-entry__heading {
+  font-size: 104px;
+  font-weight: 700;
+  color: #000000;
+  letter-spacing: 0;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.fw-entry__status {
+  margin-top: 4px;
+  background-color: #006934;
+  text-align: center;
+  width: 730px;
+  height: 545px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fw-entry__status-text {
+  font-size: 500px;
+  font-weight: 700;
+  color: #fff800;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  margin-top: 0px;
+}
+
+.fw-entry__status.fw-entry__status--ng {
+  margin-top: 4px;
+  background-color: #dd051f;
+}
+
+.fw-entry__status-text.fw-entry__status-text--ng {
+  color: #ffffff;
+  margin-top: -40px;
+}
+
+.fw-entry__notice {
+  margin-top: 100px;
+  font-size: 65px;
+  font-weight: 700;
+  color: #000000;
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.fw-entry__price-box {
+  margin-top: 60px;
+  border-top: 5px solid #006934;
+  border-bottom: 5px solid #006934;
+  width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fw-entry__price-heading {
+  font-size: 65px;
+  font-weight: 700;
+  color: #006934;
+  letter-spacing: 0;
+  line-height: 1.5;
+  text-align: center;
+  border-bottom: 5px solid #006934;
+}
+
+.fw-entry__heading-note {
+  font-size: 37px;
+  font-weight: 600;
+  color: #006934;
+  letter-spacing: 0;
+  line-height: 1.5;
+  display: inline-block;
+  margin-left: -30px;
+  white-space: nowrap;
+}
+
+.fw-entry__price-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fw-entry__price-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 50px;
+  /* width: fit-content;
    margin-left: auto;
    margin-right: auto; */
- }
- 
- .fw-entry__price-label,
- .fw-entry__price-value {
-   font-size: 48px;
-   font-weight: 700;
-   color: #006934;
-   letter-spacing: 0;
-   line-height: 1.5;
-   margin-left: 0;
- }
- 
- .fw-entry__price-value {
-   width: 425px;
-   text-align: right;
-   margin-left: 0;
- }
- 
- .fw-entry__price-note {
-   font-size: 42px;
-   font-weight: 600;
-   color: #006934;
-   letter-spacing: 0;
-   line-height: 1.5;
- }
- 
- .fw-entry__price-label-note {
-   font-size: 60px;
-   font-weight: 700;
-   color: #006934;
-   letter-spacing: -0.5em;
-   line-height: 1.5;
- }
- 
- .fw-entry__img {
-   margin-top: 110px;
-   width: 856px;
-   margin-left: auto;
-   margin-right: auto;
- }
- 
- .fw-entry__img img {
-   width: 100%;
-   height: auto;
-   aspect-ratio: 856/350;
- }
- 
- /* ===========================
+}
+
+.fw-entry__price-label,
+.fw-entry__price-value {
+  font-size: 48px;
+  font-weight: 700;
+  color: #006934;
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin-left: 0;
+}
+
+.fw-entry__price-value {
+  width: 425px;
+  text-align: right;
+  margin-left: 0;
+}
+
+.fw-entry__price-note {
+  font-size: 42px;
+  font-weight: 600;
+  color: #006934;
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+
+.fw-entry__price-label-note {
+  font-size: 60px;
+  font-weight: 700;
+  color: #006934;
+  letter-spacing: -0.5em;
+  line-height: 1.5;
+}
+
+.fw-entry__img {
+  margin-top: 110px;
+  width: 856px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fw-entry__img img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 856/350;
+}
+
+/* ===========================
   * FW乗り入れ（ヨコ） page-fw-yoko.php
   * =========================== */
- 
- .info_horizontal__wrapper .fw-entry__header,
- .info_horizontal__wrapper .fw-entry__footer {
-   /* background-image: url("../images/common/fw-entry-line.png"); */
-   background-size: cover;
-   background-position: center;
-   background-repeat: no-repeat;
-   height: 75px;
-   width: 100%;
-   aspect-ratio: 1080/75;
- }
- 
- .info_horizontal__wrapper .fw-entry__heading {
-   font-size: 70px;
- }
- 
- .info_horizontal__wrapper .fw-entry__status {
-   width: 520px;
-   height: 400px;
- }
- 
- .info_horizontal__wrapper .fw-entry {
-   padding-top: 25px;
- }
- 
- .info_horizontal__wrapper .fw-entry__notice {
-   font-size: 40px;
-   margin-top: 40px;
- } 
+
+.info_horizontal__wrapper .fw-entry__header,
+.info_horizontal__wrapper .fw-entry__footer {
+  background-image: url("/images/common/fw-entry-line.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 75px;
+  width: 100%;
+  aspect-ratio: 1080/75;
+}
+
+.info_horizontal__wrapper .fw-entry__heading {
+  font-size: 70px;
+}
+
+.info_horizontal__wrapper .fw-entry__status {
+  width: 520px;
+  height: 400px;
+}
+
+.info_horizontal__wrapper .fw-entry {
+  padding-top: 25px;
+}
+
+.info_horizontal__wrapper .fw-entry__notice {
+  font-size: 40px;
+  margin-top: 40px;
+}
