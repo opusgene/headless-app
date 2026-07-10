@@ -72,7 +72,7 @@ export default async function FairwayGuideSignagePage({
               {isOk ? (
                 <img src="/images/common/fw-entry-ok.jpg" alt="OK" />
               ) : (
-                "NG"
+                "×"
               )}
             </div>
           </div>
