@@ -27,7 +27,8 @@ export default async function FairwayGuideSignagePage({
   // フェアウェイ利用案内取得
   const { data: guide, error: guideError } = await supabasePublic
     .from("fairway_guides")
-    .select(`
+    .select(
+      `
       status,
       ok_message,
       ng_message,
@@ -39,7 +40,8 @@ export default async function FairwayGuideSignagePage({
       visitor_price_weekday,
       visitor_price_holiday,
       updated_at
-    `)
+    `
+    )
     .eq("golf_course_id", golfCourse.id)
     .single();
 
@@ -50,80 +52,101 @@ export default async function FairwayGuideSignagePage({
   const isOk = guide.status === "ok";
 
   return (
-    <div
-      className={`w-full h-screen flex flex-col items-center justify-center text-white px-10 text-center transition-colors duration-300 ${
-        isOk ? "bg-green-700" : "bg-red-700"
-      }`}
-    >
-      {/* タイトル */}
-      <div className="text-3xl font-bold mb-6">
-        本日のFW乗り入れ
-      </div>
+    // <div
+    //   className={`w-full h-screen flex flex-col items-center justify-center text-white px-10 text-center transition-colors duration-300 ${
+    //     isOk ? "bg-green-700" : "bg-red-700"
+    //   }`}
+    // >
+    //   {/* タイトル */}
+    //   <div className="text-3xl font-bold mb-6">
+    //     本日のFW乗り入れ
+    //   </div>
 
-      {/* OK / NG */}
-      <div className="text-7xl font-extrabold mb-8">
-        {isOk ? "OK" : "NG"}
-      </div>
+    //   {/* OK / NG */}
+    //   <div className="text-7xl font-extrabold mb-8">
+    //     {isOk ? "OK" : "NG"}
+    //   </div>
 
-      {/* メッセージ */}
-      <div className="text-xl whitespace-pre-wrap mb-10">
-        {isOk
-          ? (guide.ok_message ?? "")
-          : (guide.ng_message ?? "")}
-      </div>
+    //   {/* メッセージ */}
+    //   <div className="text-xl whitespace-pre-wrap mb-10">
+    //     {isOk
+    //       ? (guide.ok_message ?? "")
+    //       : (guide.ng_message ?? "")}
+    //   </div>
 
-      {/* 料金表 */}
-      {isOk && guide.show_price_table && (
-        <div className="text-lg">
-          <div className="font-semibold mb-3">
-            ご利用料金（お一人様）
+    //   {/* 料金表 */}
+    //   {isOk && guide.show_price_table && (
+    //     <div className="text-lg">
+    //       <div className="font-semibold mb-3">
+    //         ご利用料金（お一人様）
+    //       </div>
+
+    //       <table className="border-collapse mx-auto">
+    //         <thead>
+    //           <tr>
+    //             <th className="px-6 py-2"></th>
+    //             <th className="px-6 py-2">平日</th>
+    //             <th className="px-6 py-2">土日祝</th>
+    //           </tr>
+    //         </thead>
+
+    //         <tbody>
+    //           <tr>
+    //             <td className="px-6 py-2 text-left">
+    //               {guide.member_label ?? "メンバー"}
+    //             </td>
+    //             <td className="px-6 py-2">
+    //               {guide.member_price_weekday ?? 0}円（税込）
+    //             </td>
+    //             <td className="px-6 py-2">
+    //               {guide.member_price_holiday ?? 0}円（税込）
+    //             </td>
+    //           </tr>
+
+    //           <tr>
+    //             <td className="px-6 py-2 text-left">
+    //               {guide.visitor_label ?? "ビジター"}
+    //             </td>
+    //             <td className="px-6 py-2">
+    //               {guide.visitor_price_weekday ?? 0}円（税込）
+    //             </td>
+    //             <td className="px-6 py-2">
+    //               {guide.visitor_price_holiday ?? 0}円（税込）
+    //             </td>
+    //           </tr>
+    //         </tbody>
+    //       </table>
+    //     </div>
+    //   )}
+
+    //   {/* 更新日時 */}
+    //   {/* {guide.updated_at && (
+    //     <div className="absolute bottom-4 text-xs opacity-70">
+    //       更新：
+    //       {new Date(guide.updated_at).toLocaleString("ja-JP")}
+    //     </div>
+    //   )} */}
+    // </div>
+    <div className="fw-entry">
+      <div className="fw-entry__inner inner">
+        <div className="fw-entry__heading">本日のFW乗り入れ</div>
+
+        <div
+          className={`fw-entry__status ${!isOk ? "fw-entry__status--ng" : ""}`}
+        >
+          <div
+            className={`fw-entry__status-text ${
+              !isOk ? "fw-entry__status-text--ng" : ""
+            }`}
+          >
+            {isOk ? "OK" : "NG"}
           </div>
-
-          <table className="border-collapse mx-auto">
-            <thead>
-              <tr>
-                <th className="px-6 py-2"></th>
-                <th className="px-6 py-2">平日</th>
-                <th className="px-6 py-2">土日祝</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr>
-                <td className="px-6 py-2 text-left">
-                  {guide.member_label ?? "メンバー"}
-                </td>
-                <td className="px-6 py-2">
-                  {guide.member_price_weekday ?? 0}円（税込）
-                </td>
-                <td className="px-6 py-2">
-                  {guide.member_price_holiday ?? 0}円（税込）
-                </td>
-              </tr>
-
-              <tr>
-                <td className="px-6 py-2 text-left">
-                  {guide.visitor_label ?? "ビジター"}
-                </td>
-                <td className="px-6 py-2">
-                  {guide.visitor_price_weekday ?? 0}円（税込）
-                </td>
-                <td className="px-6 py-2">
-                  {guide.visitor_price_holiday ?? 0}円（税込）
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
-      )}
 
-      {/* 更新日時 */}
-      {/* {guide.updated_at && (
-        <div className="absolute bottom-4 text-xs opacity-70">
-          更新：
-          {new Date(guide.updated_at).toLocaleString("ja-JP")}
+        <div className="fw-entry__notice">
+          {isOk ? guide.ok_message ?? "" : guide.ng_message ?? ""}
         </div>
-      )} */}
+      </div>
     </div>
   );
 }
