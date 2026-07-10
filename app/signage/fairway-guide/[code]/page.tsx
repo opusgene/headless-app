@@ -96,7 +96,7 @@ export default async function FairwayGuideSignagePage({
                   <dd className="fw-entry__price-label">(平　日)</dd>
 
                   <dd className="fw-entry__price-value">
-                    {guide.member_price_weekday ?? 0}円
+                    {(guide.member_price_weekday ?? 0).toLocaleString()}円{" "}
                     <span className="fw-entry__price-note">（税込）</span>
                   </dd>
                 </div>
@@ -108,7 +108,7 @@ export default async function FairwayGuideSignagePage({
                   <dd className="fw-entry__price-label">(土日祝)</dd>
 
                   <dd className="fw-entry__price-value">
-                    {guide.member_price_holiday ?? 0}円
+                    {(guide.member_price_holiday ?? 0).toLocaleString()}円
                     <span className="fw-entry__price-note">（税込）</span>
                   </dd>
                 </div>
@@ -120,7 +120,7 @@ export default async function FairwayGuideSignagePage({
                   <dd className="fw-entry__price-label">(平　日)</dd>
 
                   <dd className="fw-entry__price-value">
-                    {guide.visitor_price_weekday ?? 0}円
+                    {(guide.visitor_price_weekday ?? 0).toLocaleString()}円
                     <span className="fw-entry__price-note">（税込）</span>
                   </dd>
                 </div>
@@ -132,7 +132,7 @@ export default async function FairwayGuideSignagePage({
                   <dd className="fw-entry__price-label">(土日祝)</dd>
 
                   <dd className="fw-entry__price-value">
-                    {guide.visitor_price_holiday ?? 0}円
+                    {(guide.visitor_price_holiday ?? 0).toLocaleString()}円{" "}
                     <span className="fw-entry__price-note">（税込）</span>
                   </dd>
                 </div>
