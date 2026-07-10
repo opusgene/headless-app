@@ -2,7 +2,7 @@
 
 import { ReactNode, Suspense } from "react";
 import LayoutContent from "./LayoutContent";
-import "../globals.css";
+import "./globals.css";
 
 export default function AdminLayout({
   children,
