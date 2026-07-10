@@ -154,35 +154,55 @@ export default async function FairwayGuideSignagePage({
               <span className="fw-entry__heading-note">（お一人様）</span>
             </div>
 
-            <div className="fw-entry__price-list">
+            <dl className="fw-entry__price-list">
               <div className="fw-entry__price-item">
-                <div className="fw-entry__price-label">
+                <dt className="fw-entry__price-label">
                   {guide.member_label ?? "メンバー"}
-                </div>
+                </dt>
+                <dd className="fw-entry__price-label">(平　日)</dd>
 
-                <div className="fw-entry__price-value">
-                  平日 {guide.member_price_weekday ?? 0}円（税込）
-                </div>
-
-                <div className="fw-entry__price-value">
-                  土日祝 {guide.member_price_holiday ?? 0}円（税込）
-                </div>
+                <dd className="fw-entry__price-value">
+                  {guide.member_price_weekday ?? 0}円
+                  <span className="fw-entry__price-note">（税込）</span>
+                </dd>
               </div>
 
               <div className="fw-entry__price-item">
-                <div className="fw-entry__price-label">
-                  {guide.visitor_label ?? "ビジター"}
-                </div>
+                <dt className="fw-entry__price-label">
+                  {guide.member_label ?? "メンバー"}
+                </dt>
+                <dd className="fw-entry__price-label">(土日祝)</dd>
 
-                <div className="fw-entry__price-value">
-                  平日 {guide.visitor_price_weekday ?? 0}円（税込）
-                </div>
-
-                <div className="fw-entry__price-value">
-                  土日祝 {guide.visitor_price_holiday ?? 0}円（税込）
-                </div>
+                <dd className="fw-entry__price-value">
+                  {guide.member_price_holiday ?? 0}円
+                  <span className="fw-entry__price-note">（税込）</span>
+                </dd>
               </div>
-            </div>
+
+              <div className="fw-entry__price-item">
+                <dt className="fw-entry__price-label">
+                  {guide.visitor_label ?? "ビジター"}
+                </dt>
+                <dd className="fw-entry__price-label">(平　日)</dd>
+
+                <dd className="fw-entry__price-value">
+                  {guide.visitor_price_weekday ?? 0}円
+                  <span className="fw-entry__price-note">（税込）</span>
+                </dd>
+              </div>
+
+              <div className="fw-entry__price-item">
+                <dt className="fw-entry__price-label">
+                  {guide.visitor_label ?? "ビジター"}
+                </dt>
+                <dd className="fw-entry__price-label">(土日祝)</dd>
+
+                <dd className="fw-entry__price-value">
+                  {guide.visitor_price_holiday ?? 0}円
+                  <span className="fw-entry__price-note">（税込）</span>
+                </dd>
+              </div>
+            </dl>
           </div>
         )}
       </div>
