@@ -128,11 +128,13 @@
    color: #006934;
    letter-spacing: 0;
    line-height: 1.5;
+   margin-left: 0;
  }
  
  .fw-entry__price-value {
    width: 425px;
    text-align: right;
+   margin-left: 0;
  }
  
  .fw-entry__price-note {
