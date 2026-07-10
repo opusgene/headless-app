@@ -3,6 +3,7 @@
 import { Providers } from "./providers";
 import { ImpersonateProvider } from "@/context/impersonateContext";
 import type { ReactNode } from "react";
+import "./globals.css";
 
 export const metadata = {
   title: "Golf Admin",
