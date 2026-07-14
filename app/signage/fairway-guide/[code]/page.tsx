@@ -53,96 +53,104 @@ export default async function FairwayGuideSignagePage({
 
   return (
     <>
-      <header className="fw-entry__header" />
+      <header className="fw-entry__header"></header>
 
       <main className="fw-entry">
-        <div className="fw-entry__inner inner">
-          <div className="fw-entry__heading">本日のFW乗り入れ</div>
+        <div
+          className={`fw-entry__inner inner ${
+            !isOk || !guide.show_price_table ? "fw-entry__inner--single" : ""
+          }`}
+        >
+          <div className="fw-entry__main">
+            <p className="fw-entry__heading">本日のFW乗り入れ</p>
 
-          <div
-            className={`fw-entry__status ${
-              !isOk ? "fw-entry__status--ng" : ""
-            }`}
-          >
             <div
-              className={`fw-entry__status-text ${
-                !isOk ? "fw-entry__status-text--ng" : ""
+              className={`fw-entry__status ${
+                !isOk ? "fw-entry__status--ng" : ""
               }`}
             >
-              {isOk ? (
-                <img src="/images/common/fw-entry-ok.jpg" alt="OK" />
-              ) : (
-                "×"
-              )}
+              <p
+                className={`fw-entry__status-text ${
+                  !isOk ? "fw-entry__status-text--ng" : ""
+                }`}
+              >
+                {isOk ? (
+                  <img src="/images/common/fw-entry-ok.jpg" alt="OK" />
+                ) : (
+                  "×"
+                )}
+              </p>
             </div>
-          </div>
 
-          <div className="fw-entry__notice">
-            {isOk ? guide.ok_message ?? "" : guide.ng_message ?? ""}
+            <p className="fw-entry__notice">
+              {isOk ? guide.ok_message ?? "" : guide.ng_message ?? ""}
+            </p>
           </div>
 
           {isOk && guide.show_price_table && (
-            <div className="fw-entry__price-box">
-              <div className="fw-entry__price-heading">
-                ご利用料金
-                <span className="fw-entry__heading-note">（お一人様）</span>
+            <div className="fw-entry__side">
+              <div className="fw-entry__price-box">
+                <p className="fw-entry__price-heading">
+                  ご利用料金
+                  <span className="fw-entry__heading-note">（お一人様）</span>
+                </p>
+
+                <dl className="fw-entry__price-list">
+                  <div className="fw-entry__price-item">
+                    <dt className="fw-entry__price-label">
+                      <span>{guide.member_label ?? "メンバー"}</span>
+                      <span>(平　日)</span>
+                    </dt>
+
+                    <dd className="fw-entry__price-value">
+                      {(guide.member_price_weekday ?? 0).toLocaleString()}円
+                      <span className="fw-entry__price-note">（税込）</span>
+                    </dd>
+                  </div>
+
+                  <div className="fw-entry__price-item">
+                    <dt className="fw-entry__price-label">
+                      <span>{guide.member_label ?? "メンバー"}</span>
+                      <span>(土日祝)</span>
+                    </dt>
+
+                    <dd className="fw-entry__price-value">
+                      {(guide.member_price_holiday ?? 0).toLocaleString()}円
+                      <span className="fw-entry__price-note">（税込）</span>
+                    </dd>
+                  </div>
+
+                  <div className="fw-entry__price-item">
+                    <dt className="fw-entry__price-label">
+                      <span>{guide.visitor_label ?? "ビジター"}</span>
+                      <span>(平　日)</span>
+                    </dt>
+
+                    <dd className="fw-entry__price-value">
+                      {(guide.visitor_price_weekday ?? 0).toLocaleString()}円
+                      <span className="fw-entry__price-note">（税込）</span>
+                    </dd>
+                  </div>
+
+                  <div className="fw-entry__price-item">
+                    <dt className="fw-entry__price-label">
+                      <span>{guide.visitor_label ?? "ビジター"}</span>
+                      <span>(土日祝)</span>
+                    </dt>
+
+                    <dd className="fw-entry__price-value">
+                      {(guide.visitor_price_holiday ?? 0).toLocaleString()}円
+                      <span className="fw-entry__price-note">（税込）</span>
+                    </dd>
+                  </div>
+                </dl>
               </div>
-
-              <dl className="fw-entry__price-list">
-                <div className="fw-entry__price-item">
-                  <dt className="fw-entry__price-label">
-                    {guide.member_label ?? "メンバー"}
-                  </dt>
-                  <dd className="fw-entry__price-label">(平　日)</dd>
-
-                  <dd className="fw-entry__price-value">
-                    {(guide.member_price_weekday ?? 0).toLocaleString()}円{" "}
-                    <span className="fw-entry__price-note">（税込）</span>
-                  </dd>
-                </div>
-
-                <div className="fw-entry__price-item">
-                  <dt className="fw-entry__price-label">
-                    {guide.member_label ?? "メンバー"}
-                  </dt>
-                  <dd className="fw-entry__price-label">(土日祝)</dd>
-
-                  <dd className="fw-entry__price-value">
-                    {(guide.member_price_holiday ?? 0).toLocaleString()}円
-                    <span className="fw-entry__price-note">（税込）</span>
-                  </dd>
-                </div>
-
-                <div className="fw-entry__price-item">
-                  <dt className="fw-entry__price-label">
-                    {guide.visitor_label ?? "ビジター"}
-                  </dt>
-                  <dd className="fw-entry__price-label">(平　日)</dd>
-
-                  <dd className="fw-entry__price-value">
-                    {(guide.visitor_price_weekday ?? 0).toLocaleString()}円
-                    <span className="fw-entry__price-note">（税込）</span>
-                  </dd>
-                </div>
-
-                <div className="fw-entry__price-item">
-                  <dt className="fw-entry__price-label">
-                    {guide.visitor_label ?? "ビジター"}
-                  </dt>
-                  <dd className="fw-entry__price-label">(土日祝)</dd>
-
-                  <dd className="fw-entry__price-value">
-                    {(guide.visitor_price_holiday ?? 0).toLocaleString()}円{" "}
-                    <span className="fw-entry__price-note">（税込）</span>
-                  </dd>
-                </div>
-              </dl>
             </div>
           )}
         </div>
       </main>
 
-      <footer className="fw-entry__footer" />
+      <footer className="fw-entry__footer"></footer>
     </>
   );
 }
